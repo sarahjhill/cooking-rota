@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Rota
+from .models import Profile, Rota, Slot
 
 
 class SignUpForm(UserCreationForm):
@@ -42,4 +42,14 @@ class RotaForm(forms.ModelForm):
             "start_date": forms.DateInput(attrs={"type": "date"}),
             "end_date": forms.DateInput(attrs={"type": "date"}),
             "dietary_notes": forms.Textarea(attrs={"rows": 3}),
+        }
+
+class SlotForm(forms.ModelForm):
+
+    class Meta:
+        model = Slot
+        fields = ["date", "notes"]
+        widgets = {
+            "date": forms.DateInput(attrs={"type": "date"}),
+            "notes": forms.Textarea(attrs={"rows": 2}),
         }

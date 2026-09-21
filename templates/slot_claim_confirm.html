@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Claim this date &mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  <h1>Claim {{ slot.date }}?</h1>
+  <p class="muted">For {{ slot.rota.recipient_name }}</p>
+
+  <div class="card">
+    <p>You're signing up to cook on this date. You can cancel it again later if
+    something comes up.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn" type="submit">Yes, I've got this one</button>
+      <a class="btn btn-small" href="{% url 'rota:rota_detail' slot.rota.pk %}">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

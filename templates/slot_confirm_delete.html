@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Delete date &mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  <h1>Delete this date?</h1>
+
+  <div class="card">
+    <p>
+      This removes <strong>{{ slot.date }}</strong> from
+      {{ slot.rota.recipient_name }}'s rota entirely
+      {% if slot.cook %}— {{ slot.cook.username }} will lose their claim on it{% endif %}.
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn" type="submit">Yes, delete it</button>
+      <a class="btn btn-small" href="{% url 'rota:rota_detail' slot.rota.pk %}">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

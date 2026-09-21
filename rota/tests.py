@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Profile, Rota
+from .models import Profile, Rota, Slot
 
 
 class SignUpTests(TestCase):
@@ -120,3 +120,77 @@ class RotaCRUDTests(TestCase):
         self.client.login(username="cook1", password="Sturdy-Passphrase-42")
         response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
         self.assertEqual(response.status_code, 200)
+
+class SlotCRUDTests(TestCase):
+
+    def setUp(self):
+        self.organiser = User.objects.create_user(username="org1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.organiser, role="organiser")
+
+        self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.cook, role="cook")
+
+        self.other_cook = User.objects.create_user(username="cook2", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.other_cook, role="cook")
+
+        self.rota = Rota.objects.create(
+            organiser=self.organiser,
+            recipient_name="Jo",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 14),
+        )
+        self.slot = Slot.objects.create(rota=self.rota, date=date(2026, 1, 3))
+
+    def test_organiser_can_add_a_slot(self):
+        self.client.login(username="org1", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:slot_create", args=[self.rota.pk]), {
+            "date": "2026-01-05",
+            "notes": "",
+        })
+        self.assertEqual(self.rota.slots.count(), 2)
+        self.assertRedirects(response, reverse("rota:rota_detail", args=[self.rota.pk]))
+
+    def test_cook_cannot_add_a_slot(self):
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:slot_create", args=[self.rota.pk]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_cook_can_claim_an_open_slot(self):
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:slot_claim", args=[self.slot.pk]))
+        self.assertRedirects(response, reverse("rota:rota_detail", args=[self.rota.pk]))
+
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.cook, self.cook)
+        self.assertIsNotNone(self.slot.claimed_at)
+
+    def test_cook_cannot_claim_an_already_claimed_slot(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="cook2", password="Sturdy-Passphrase-42")
+        self.client.post(reverse("rota:slot_claim", args=[self.slot.pk]))
+
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.cook, self.cook)
+
+    def test_cook_can_cancel_their_own_claim(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        self.client.post(reverse("rota:slot_cancel", args=[self.slot.pk]))
+
+        self.slot.refresh_from_db()
+        self.assertIsNone(self.slot.cook)
+
+    def test_cook_cannot_cancel_someone_elses_claim(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="cook2", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:slot_cancel", args=[self.slot.pk]))
+        self.assertEqual(response.status_code, 403)
+
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.cook, self.cook)
