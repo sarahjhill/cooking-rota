@@ -188,6 +188,53 @@ body {
     margin-bottom: 0.4rem;
 }
 
+/* ---- Rota calendar grid (rota_detail.html) ---- */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+}
+
+.calendar-day {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--muted);
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+    background: var(--bg);
+}
+
+.calendar-day--open {
+    border-left-color: var(--primary);
+}
+
+.calendar-day--claimed {
+    border-left-color: #2f7d5b;
+}
+
+.calendar-day__date {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.calendar-day__status {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.calendar-day__status--claimed {
+    color: #2f7d5b;
+    font-weight: 600;
+}
+
+.calendar-day .btn-small {
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 600px) {
     .main-nav {
         flex-direction: column;
