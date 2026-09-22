@@ -245,3 +245,58 @@ class OwnershipPermissionTests(TestCase):
         self.client.login(username="cook1", password="Sturdy-Passphrase-42")
         response = self.client.get(reverse("rota:rota_create"))
         self.assertEqual(response.status_code, 403)
+
+
+class NotificationTests(TestCase):
+    """Every create/update/delete/claim/cancel action shows an on-page message."""
+
+    def setUp(self):
+        self.organiser = User.objects.create_user(username="organiser1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.organiser, role="organiser")
+        self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.cook, role="cook")
+        self.rota = Rota.objects.create(
+            organiser=self.organiser,
+            recipient_name="Test Recipient",
+            start_date=date(2026, 10, 1),
+            end_date=date(2026, 10, 14),
+        )
+        self.slot = Slot.objects.create(rota=self.rota, date=date(2026, 10, 5))
+
+    def test_login_shows_welcome_back_message(self):
+        response = self.client.post(
+            reverse("login"),
+            {"username": "organiser1", "password": "Sturdy-Passphrase-42"},
+            follow=True,
+        )
+        self.assertContains(response, "Welcome back, organiser1.")
+
+    def test_logout_shows_logged_out_message(self):
+        self.client.login(username="organiser1", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("logout"), follow=True)
+        self.assertContains(response, "You&#x27;ve been logged out.")
+
+    def test_creating_a_rota_shows_a_message(self):
+        self.client.login(username="organiser1", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:rota_create"), {
+            "recipient_name": "New Recipient",
+            "start_date": "2026-11-01",
+            "end_date": "2026-11-14",
+        }, follow=True)
+        self.assertContains(response, "created.")
+
+    def test_claiming_a_slot_shows_a_message(self):
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        response = self.client.post(
+            reverse("rota:slot_claim", args=[self.slot.pk]), follow=True
+        )
+        self.assertContains(response, "You&#x27;re down for")
+
+    def test_cancelling_a_claim_shows_a_message(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        response = self.client.post(
+            reverse("rota:slot_cancel", args=[self.slot.pk]), follow=True
+        )
+        self.assertContains(response, "Date released")
