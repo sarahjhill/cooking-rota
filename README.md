@@ -34,6 +34,8 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 
 See `docs/erd.md` for the full breakdown.
 
+**Auto-generated architecture diagram:** [view on GitDiagram](https://gitdiagram.com/sarahjhill/community-cooking-rota) — an interactive map of how requests flow through the app (URLs → views → access control → models), generated straight from this repo's code.
+
 ## Screenshots
 
 | Homepage | Rota detail (calendar view) |
