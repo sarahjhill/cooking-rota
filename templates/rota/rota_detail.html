@@ -19,15 +19,22 @@
 
     <h2>Dates</h2>
 {% if rota.slots.all %}
-    <ul class="rota-list">
+    <ul class="calendar-grid">
         {% for slot in rota.slots.all %}
-            <li>
-                {{ slot.date }} &mdash;
-                {% if slot.cook %}{{ slot.cook.username }}{% else %}<span class="muted">unclaimed</span>{% endif %}
+            <li class="calendar-day {% if slot.cook %}calendar-day--claimed{% else %}calendar-day--open{% endif %}">
+                <span class="calendar-day__date">{{ slot.date }}</span>
+
+                {% if slot.cook %}
+                    <span class="calendar-day__status calendar-day__status--claimed">{{ slot.cook.username }}</span>
+                {% else %}
+                    <span class="calendar-day__status">Open &mdash; nobody signed up yet</span>
+                {% endif %}
 
                 {% if user == rota.organiser %}
-                    <a href="{% url 'rota:slot_update' slot.pk %}">Edit</a>
-                    <a href="{% url 'rota:slot_delete' slot.pk %}">Delete</a>
+                    <div>
+                        <a href="{% url 'rota:slot_update' slot.pk %}">Edit</a>
+                        <a href="{% url 'rota:slot_delete' slot.pk %}">Delete</a>
+                    </div>
                 {% elif not slot.cook and user.is_authenticated and user.profile.role == "cook" %}
                     <a class="btn btn-small" href="{% url 'rota:slot_claim' slot.pk %}">Claim this date</a>
                 {% elif slot.cook == user %}
