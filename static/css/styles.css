@@ -92,6 +92,14 @@ h1, h2, h3 {
     background: var(--primary-dark);
 }
 
+.btn-danger {
+    background: #b3261e;
+}
+
+.btn-danger:hover {
+    background: #8a1d17;
+}
+
 /* ---------------------------------------------------------------
    Added to cover the markup in base.html: skip link, flash
    messages, footer and the home page list.
@@ -233,6 +241,16 @@ body {
 .calendar-day .btn-small {
     display: inline-block;
     margin-top: 0.5rem;
+}
+
+.calendar-day__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.calendar-day__actions .btn-small {
+    margin-top: 0;
 }
 
 @media (max-width: 600px) {
