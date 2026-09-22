@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Not allowed — Community Cooking Rota{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1>That's not yours to change</h1>
+  <p>
+    {% if exception %}{{ exception }}{% else %}
+    You're signed in, but this isn't something you're allowed to do.
+    {% endif %}
+  </p>
+  <p><a class="btn" href="{% url 'rota:home' %}">Back to Rotas</a></p>
+</div>
+{% endblock %}

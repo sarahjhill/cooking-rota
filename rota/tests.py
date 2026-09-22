@@ -194,3 +194,54 @@ class SlotCRUDTests(TestCase):
 
         self.slot.refresh_from_db()
         self.assertEqual(self.slot.cook, self.cook)
+
+class OwnershipPermissionTests(TestCase):
+    def setUp(self):
+        self.organiser = User.objects.create_user(username="org1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.organiser, role="organiser")
+
+        self.other_organiser = User.objects.create_user(username="org2", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.other_organiser, role="organiser")
+
+        self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.cook, role="cook")
+
+        self.rota = Rota.objects.create(
+            organiser=self.organiser,
+            recipient_name="Jo",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 14),
+        )
+        self.slot = Slot.objects.create(rota=self.rota, date=date(2026, 1, 3))
+
+    def test_anonymous_visitor_redirected_to_login_not_500(self):
+        response = self.client.get(reverse("rota:rota_create"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+
+    def test_other_organiser_cannot_delete_this_rota(self):
+        self.client.login(username="org2", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:rota_delete", args=[self.rota.pk]))
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Rota.objects.filter(pk=self.rota.pk).exists())
+
+    def test_other_organiser_cannot_add_a_slot_to_this_rota(self):
+        self.client.login(username="org2", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:slot_create", args=[self.rota.pk]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_other_organiser_cannot_edit_a_slot_on_this_rota(self):
+        self.client.login(username="org2", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:slot_update", args=[self.slot.pk]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_other_organiser_cannot_delete_a_slot_on_this_rota(self):
+        self.client.login(username="org2", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:slot_delete", args=[self.slot.pk]))
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Slot.objects.filter(pk=self.slot.pk).exists())
+
+    def test_denied_attempt_returns_403_with_a_message_not_a_crash(self):
+        self.client.login(username="cook1", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:rota_create"))
+        self.assertEqual(response.status_code, 403)
