@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SME Code Review — Findings — Community Cooking Rota</title>
+<style>
+  :root{
+    --ink:#0A0A0C; --paper:#F6F3ED; --surface:#FFFDF9;
+    --flame:#C2260E; --flame-bright:#FF3B1F; --amber:#8A5D00;
+    --text:#1f2933; --muted:#56534D; --border:#DCD7CC;
+    --ok:#1E7A5A; --warn:#8A5D00; --danger:#B02F2F;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--text);
+    font-family:var(--sans); line-height:1.65; font-size:16px;
+  }
+  .sheet{max-width:860px; margin:0 auto; padding:0 24px 80px;}
+  header.head{
+    border-bottom:3px solid var(--flame); padding:34px 0 18px; margin-bottom:34px;
+  }
+  .brandline{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; flex-wrap:wrap; font-size:.82rem; color:var(--muted);
+    letter-spacing:.04em; text-transform:uppercase;
+  }
+  .brandline b{color:var(--ink)}
+  h1{
+    font-size:2.1rem; line-height:1.15; letter-spacing:-.025em;
+    margin:.5em 0 .25em; color:var(--ink); font-weight:800;
+  }
+  .sub{font-size:1.08rem; color:var(--muted); margin:0 0 4px; max-width:62ch;}
+  h2{
+    font-size:1.35rem; letter-spacing:-.02em; color:var(--ink); font-weight:800;
+    margin:52px 0 6px; padding-top:20px; border-top:1px solid var(--border);
+  }
+  h2:first-of-type{border-top:0; padding-top:0; margin-top:34px;}
+  h2 .num{
+    display:inline-block; min-width:1.9em; color:var(--flame);
+    font-variant-numeric:tabular-nums;
+  }
+  h3{font-size:1.02rem; margin:26px 0 4px; color:var(--ink); font-weight:700;}
+  p{margin:.7em 0; max-width:70ch;}
+  .why{
+    border-left:3px solid var(--amber); background:#FFF8EA;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .why b{color:var(--amber)}
+  .warn{
+    border-left:3px solid var(--danger); background:#FCEEEE;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .warn b{color:var(--danger)}
+  .good{
+    border-left:3px solid var(--ok); background:#EAF6F1;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .good b{color:var(--ok)}
+  .finding{
+    background:var(--surface); border:1px solid var(--border); border-radius:6px;
+    padding:18px 20px; margin:18px 0;
+  }
+  .finding-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:12px; flex-wrap:wrap; margin-bottom:6px;
+  }
+  .finding-head b{font-size:1.02rem; color:var(--ink);}
+  .pill{
+    display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; padding:2px 10px; border-radius:999px;
+  }
+  .pill--medium{background:#FFF3D6; color:var(--amber);}
+  .pill--low{background:#EAF6F1; color:var(--ok);}
+  .say{color:var(--flame); font-weight:700; font-size:.78rem; text-transform:uppercase;
+    letter-spacing:.04em; margin-right:6px;}
+  a{color:var(--flame); text-decoration:underline;}
+  code{font-family:var(--mono); font-size:.88em; background:#EFEBE2; padding:1px 5px; border-radius:3px; color:var(--flame);}
+  ul,ol{max-width:70ch; padding-left:1.3em;}
+  li{margin:.35em 0;}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.92rem;}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--surface); font-weight:700; color:var(--ink);}
+  footer{
+    margin-top:60px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:.82rem; color:var(--muted);
+  }
+  @media print{
+    body{background:#fff; font-size:11.5pt;}
+    .sheet{max-width:none; padding:0;}
+    h2{page-break-after:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="head">
+  <div class="brandline">
+    <span><b>Community Cooking Rota</b> · SME code review</span>
+    <span>22/09/2026</span>
+  </div>
+  <h1>SME code review<br>— findings</h1>
+  <p class="sub">Written up after walking through the live app as your Subject Matter
+  Expert reviewer, following the demo script from <em>ct-cb-019 — Prepare and run
+  the SME code review demo</em>. Both items below are now logged as real GitHub
+  issues, labelled <code>sme-feedback</code>.</p>
+</header>
+
+<h2><span class="num">00</span>What was reviewed</h2>
+
+<p>I walked the app the way a real user would, not the way a developer would:
+registering, creating a rota as an Organiser, claiming a slot as a Cook, and
+cancelling that claim — the same loop covered in the demo script, plus a look
+at the new calendar-grid view on the rota detail page.</p>
+
+<h2><span class="num">01</span>What's working well</h2>
+
+<div class="good">
+  <b>The core loop holds together.</b> Register → create rota → claim → cancel
+  all worked exactly as intended, with no dead ends or confusing states. The
+  calendar grid makes it immediately obvious which dates are open versus
+  claimed, and the permission checks (an organiser can't edit someone else's
+  rota, a cook can't cancel someone else's claim) behaved correctly when I
+  tried to break them.
+</div>
+
+<h2><span class="num">02</span>Feedback logged</h2>
+
+<p>Two things stood out as genuine gaps for how this app would actually get
+used — both written up as issues on your repo, in the same shape you'll use
+for your real SME session.</p>
+
+<div class="finding">
+  <div class="finding-head">
+    <b>No way to contact the cook or organiser from a rota page</b>
+    <span class="pill pill--medium">Medium priority</span>
+  </div>
+  <p><span class="say">What I found</span> Once a Cook claims a date, there's
+  no way for them to ask the organiser a question ("what time should I drop
+  this off?"), or for the organiser to reach the cook if plans change. The
+  rota page shows an address and dietary notes, but no phone or email for
+  either side.</p>
+  <p><span class="say">Why it matters</span> Real meal trains run on exactly
+  this kind of back-and-forth. This is the more consequential of the two —
+  it's a real usability gap in the core "someone signs up to help" flow.</p>
+  <p><span class="say">Possible fix</span> Show the organiser's email or phone
+  to the cook once they've claimed a slot, without exposing it publicly to
+  everyone browsing the rota.</p>
+  <p><span class="say">Logged as</span>
+  <a href="https://github.com/sarahjhill/community-cooking-rota/issues/11" target="_blank" rel="noopener">Issue #11</a></p>
+</div>
+
+<div class="finding">
+  <div class="finding-head">
+    <b>Claimed slots show a date but no time</b>
+    <span class="pill pill--low">Low priority</span>
+  </div>
+  <p><span class="say">What I found</span> A real meal rota usually needs a
+  rough drop-off time, not just a day — "Tuesday" isn't enough on its own;
+  people want to know roughly when to expect it or when to drop it round.</p>
+  <p><span class="say">Why it matters</span> Smaller than the contact-details
+  gap, but still a genuine piece of missing information for how the app gets
+  used day to day.</p>
+  <p><span class="say">Possible fix</span> The <code>Slot</code> model
+  currently only has a date field. Adding an optional time (or even just a
+  free-text "preferred time" note) would cover this without forcing precision
+  nobody has yet.</p>
+  <p><span class="say">Logged as</span>
+  <a href="https://github.com/sarahjhill/community-cooking-rota/issues/12" target="_blank" rel="noopener">Issue #12</a></p>
+</div>
+
+<h2><span class="num">03</span>Next steps</h2>
+
+<ol>
+  <li>Decide for each issue: fix now, fix later, or won't fix (comment why,
+      then close it) — see <em>ct-cb-019, step 04</em> for the full triage
+      process</li>
+  <li>If you're doing either, add it as a task in Project OS under the phase
+      it fits best — likely <b>4. Notifications</b> for the contact-details
+      one, and <b>3. Core CRUD</b> or <b>5. Testing &amp; QA</b> for the
+      slot-time one</li>
+  <li>Link the GitHub issue under that task's <b>Linked documents</b> and set
+      a realistic priority — I've suggested Medium and Low above, but it's
+      your call</li>
+</ol>
+
+<div class="why">
+  <b>Why only two.</b> This was a walkthrough of what's built so far, not an
+  exhaustive audit — the two things above are the gaps a real first-time user
+  would actually hit, not a list of everything that could theoretically be
+  improved. That's deliberate: a short, honest list you'll actually act on
+  beats a long one that gets ignored.
+</div>
+
+<footer>
+  <b>Sarah J Hill</b> — Dragon Fire Design<br>
+  sarahjhill.com · sarah@sarahjhill.com<br>
+  Community Cooking Rota · Code Institute Full-Stack Capstone
+</footer>
+
+</div>
+</body>
+</html>

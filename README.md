@@ -83,7 +83,13 @@ python manage.py runserver
   ```bash
   python manage.py test
   ```
-- **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile, plus a live SME review session — see `docs/` for the review notes and the resulting GitHub issues labelled `sme-feedback`.
+- **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile.
+- **SME review:** a live walkthrough of the app with a Subject Matter Expert, run against the [SME code review demo guide](docs/sme-code-review-demo.html). Feedback was logged as real GitHub issues (labelled [`sme-feedback`](https://github.com/sarahjhill/community-cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback)) rather than just discussed and forgotten. Full write-up below — click the image to read the whole document:
+
+  [![SME code review findings — click to read the full write-up](docs/screenshots/sme-review-findings.png)](docs/sme-review-findings.html)
+
+  - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/community-cooking-rota/issues/11) (Medium)
+  - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/community-cooking-rota/issues/12) (Low)
 - **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
 
 ## Deployment

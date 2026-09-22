@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prepare and Run the SME Code Review Demo — Community Cooking Rota</title>
+<style>
+  :root{
+    --ink:#0A0A0C; --paper:#F6F3ED; --surface:#FFFDF9;
+    --flame:#C2260E; --flame-bright:#FF3B1F; --amber:#8A5D00;
+    --text:#1f2933; --muted:#56534D; --border:#DCD7CC;
+    --ok:#1E7A5A; --warn:#8A5D00; --danger:#B02F2F;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--text);
+    font-family:var(--sans); line-height:1.65; font-size:16px;
+  }
+  .sheet{max-width:860px; margin:0 auto; padding:0 24px 80px;}
+
+  /* ---------- letterhead ---------- */
+  header.head{
+    border-bottom:3px solid var(--flame); padding:34px 0 18px; margin-bottom:34px;
+  }
+  .brandline{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; flex-wrap:wrap; font-size:.82rem; color:var(--muted);
+    letter-spacing:.04em; text-transform:uppercase;
+  }
+  .brandline b{color:var(--ink)}
+  h1{
+    font-size:2.1rem; line-height:1.15; letter-spacing:-.025em;
+    margin:.5em 0 .25em; color:var(--ink); font-weight:800;
+  }
+  .sub{font-size:1.08rem; color:var(--muted); margin:0 0 4px; max-width:62ch;}
+
+  /* ---------- structure ---------- */
+  h2{
+    font-size:1.35rem; letter-spacing:-.02em; color:var(--ink); font-weight:800;
+    margin:52px 0 6px; padding-top:20px; border-top:1px solid var(--border);
+  }
+  h2:first-of-type{border-top:0; padding-top:0; margin-top:34px;}
+  h2 .num{
+    display:inline-block; min-width:1.9em; color:var(--flame);
+    font-variant-numeric:tabular-nums;
+  }
+  h3{font-size:1.02rem; margin:26px 0 4px; color:var(--ink); font-weight:700;}
+  p{margin:.7em 0; max-width:70ch;}
+  .why{
+    border-left:3px solid var(--amber); background:#FFF8EA;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .why b{color:var(--amber)}
+  .warn{
+    border-left:3px solid var(--danger); background:#FCEEEE;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .warn b{color:var(--danger)}
+  .good{
+    border-left:3px solid var(--ok); background:#EAF6F1;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .good b{color:var(--ok)}
+  .file{
+    font-family:var(--mono); font-size:.82rem; background:var(--ink); color:#F6F3ED;
+    display:inline-block; padding:3px 10px; border-radius:3px 3px 0 0; margin-top:18px;
+  }
+  pre{
+    background:var(--ink); color:#EDEAE3; padding:16px 18px; margin:0 0 4px;
+    overflow-x:auto; border-radius:0 3px 3px 3px; font-size:.83rem; line-height:1.55;
+  }
+  .file + pre{border-top-left-radius:0}
+  code{font-family:var(--mono); font-size:.88em;}
+  p code, li code, td code{
+    background:#EFEBE2; padding:1px 5px; border-radius:3px; color:var(--flame);
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  .term{background:#141419;}
+  ul,ol{max-width:70ch; padding-left:1.3em;}
+  li{margin:.35em 0;}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.92rem;}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--surface); font-weight:700; color:var(--ink);}
+  .check{list-style:none; padding-left:0;}
+  .check li{padding-left:30px; position:relative;}
+  .check li::before{
+    content:""; position:absolute; left:0; top:.42em; width:15px; height:15px;
+    border:2px solid var(--border); border-radius:3px; background:#fff;
+  }
+  .script{
+    background:var(--surface); border:1px solid var(--border); border-radius:6px;
+    padding:16px 20px; margin:16px 0;
+  }
+  .script .say{color:var(--flame); font-weight:700; font-size:.78rem; text-transform:uppercase;
+    letter-spacing:.04em; margin-right:8px;}
+  .script p{margin:.5em 0;}
+  footer{
+    margin-top:60px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:.82rem; color:var(--muted);
+  }
+  @media print{
+    body{background:#fff; font-size:11.5pt;}
+    .sheet{max-width:none; padding:0;}
+    h2{page-break-after:avoid;} pre{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="head">
+  <div class="brandline">
+    <span><b>Community Cooking Rota</b> · Build phase</span>
+    <span>Sarah J Hill</span>
+  </div>
+  <h1>Prepare and run<br>the SME code review demo</h1>
+  <p class="sub">The last task in Phase 3. A short, live walkthrough for someone who
+  knows the domain — feedback captured as real GitHub issues, not just notes you
+  might forget. Written for macOS.</p>
+</header>
+
+<h2><span class="num">00</span>What you are building</h2>
+
+<p>By the end of this you will have:</p>
+
+<ul>
+  <li>A rehearsed <b>5-minute demo script</b> covering register → create rota →
+      claim slot → cancel</li>
+  <li>A short <b>prep checklist</b> so nothing breaks mid-demo</li>
+  <li>Every piece of feedback logged as a <b>GitHub issue</b>, not just talked
+      about and forgotten</li>
+  <li>Those issues triaged back into <b>Project OS</b>, so they become real tasks
+      with a phase and a priority</li>
+</ul>
+
+<div class="why">
+  <b>What "SME" means here.</b> Subject Matter Expert — anyone who can look at
+  the working app with fresh eyes and domain knowledge you don't have: a mentor,
+  a tutor, a friend who's organised meals for someone in real life, or your Code
+  Institute assessor if that's who you're showing. It doesn't have to be a
+  developer. The point is a second, informed opinion before you're too deep into
+  the next phase to change course cheaply.
+</div>
+
+<div class="warn">
+  <b>This one's overdue.</b> It was due <b>15/09</b> and today's the 22nd. That's
+  fine — better to run it properly late than rush it on time. Just don't let it
+  slip further: the whole reason it sits mid-sprint rather than at the end is so
+  you still have a full week to act on what comes out of it.
+</div>
+
+<h2><span class="num">01</span>Before you book the session</h2>
+
+<p>Fifteen minutes of prep now saves the demo from derailing later.</p>
+
+<h3>Make sure the app is in a demo-safe state</h3>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>cd ~/Documents/vscode-projects/cook_book
+source .venv/bin/activate
+python manage.py collectstatic --noinput
+DEBUG=True python manage.py test</code></pre>
+
+<p>All tests passing is your green light. If anything's red, fix it before you
+book time with anyone — a bug appearing live is a worse first impression than
+a short delay.</p>
+
+<h3>Decide: local or live?</h3>
+
+<table>
+  <tr><th></th><th>Local (<code>127.0.0.1:8000</code>)</th><th>Live (Heroku)</th></tr>
+  <tr>
+    <td>Best for</td>
+    <td>Screen-sharing on a call, or sitting next to someone</td>
+    <td>Sending a link for someone to click through themselves</td>
+  </tr>
+  <tr>
+    <td>Watch out for</td>
+    <td>Your Wi-Fi/laptop being visible — close anything private first</td>
+    <td>It's the real, deployed version — any bug here is the one that counts</td>
+  </tr>
+</table>
+
+<h3>Reset to clean data</h3>
+
+<p>Old test rotas with names like "asdf" and "Test Test" undermine the demo.
+Either clear them out or create fresh ones with realistic names — "The Okafor
+family", "Jo Bennett recovering from surgery" — so the reviewer is looking at
+something that reads like the real thing.</p>
+
+<h3>Have two accounts ready</h3>
+
+<p>You'll switch roles mid-demo, so log out and back in works better than two
+browser windows for most people. Know both sets of credentials before you start:</p>
+
+<ul>
+  <li>One <b>Organiser</b> account, with at least one rota already existing (so the
+      reviewer sees the "Rotas running now" list isn't empty on the homepage)</li>
+  <li>One <b>Cook</b> account, not yet claimed anything</li>
+</ul>
+
+<h2><span class="num">02</span>The demo script</h2>
+
+<p>Five minutes, four steps. Say what you're doing before you click, not after —
+it reads as confident rather than narrated-after-the-fact.</p>
+
+<div class="script">
+  <p><span class="say">Register</span> "This is the sign-up page — you choose
+  Organiser or Cook right here, at registration." Create a new Cook account live,
+  or show the existing one signing in if you'd rather not create test data on
+  camera.</p>
+  <p><span class="say">Create a rota</span> Sign in as the Organiser. "This is
+  what it looks like when someone needs a meal rota set up — a few dates, some
+  dietary notes, an address." Fill in a couple of fields, save, land on the
+  rota's detail page.</p>
+  <p><span class="say">Claim a slot</span> Switch to the Cook account. "Now
+  someone who wants to help sees the open dates and claims one." Click claim,
+  confirm, show the date now marked as taken.</p>
+  <p><span class="say">Cancel</span> "And if their plans change, they can back
+  out themselves — no admin needed." Cancel the same claim, show it's open again.</p>
+</div>
+
+<div class="why">
+  <b>Why this exact order.</b> It's the same order as your <code>SlotCRUDTests</code>
+  — register, create, claim, cancel — because that's the actual user journey the
+  whole app exists for. If a reviewer only sees one thing, it should be this loop,
+  not the admin panel or the CSS.
+</div>
+
+<h2><span class="num">03</span>Capture feedback as issues, live</h2>
+
+<p>This is the step the task is actually graded on — not the demo itself, but
+whether the feedback survives it. Have a second window open on your GitHub repo
+the whole time.</p>
+
+<span class="file">Browser — new tab, kept open throughout</span>
+<pre><code>github.com/sarahjhill/community-cooking-rota/issues/new</code></pre>
+
+<div class="warn">
+  <b>Don't wait until afterwards.</b> "I'll remember that" is exactly how good
+  feedback gets lost. The moment the SME says something — even something small,
+  even something you disagree with — open a new issue for it before you move on
+  to the next part of the demo. It takes twenty seconds and means nothing depends
+  on your memory an hour later.
+</div>
+
+<p>Keep every issue to the same short shape so they're easy to triage afterwards:</p>
+
+<span class="file">Issue title</span>
+<pre><code>[SME] Claiming a slot doesn't say who else is on the rota</code></pre>
+
+<span class="file">Issue body</span>
+<pre><code>Raised during the SME code review demo, 22/09/2026.
+
+What they said: "I'd want to see who else is cooking before I commit to a date,
+in case I want to swap with someone I know."
+
+My take: reasonable — rota_detail.html already has the full slot list, so this
+is showing existing data differently, not a new feature. Low effort.
+
+Suggested priority: Medium</code></pre>
+
+<p>Label each one <code>sme-feedback</code> so they're easy to find as a group
+later — type the label name and choose "Create new label" the first time.</p>
+
+<div class="good">
+  <b>No such thing as too small to log.</b> "I like the colour" is worth an
+  issue if it's genuine feedback — you're not obligated to act on everything,
+  but you can't triage what you didn't write down. Deciding something doesn't
+  need doing is a real outcome of triage; forgetting it existed isn't a decision
+  at all.
+</div>
+
+<h2><span class="num">04</span>After the demo — triage into Project OS</h2>
+
+<p>Issues on GitHub are the record. Project OS is where they become work with a
+phase, a priority, and a due date. Do this within a day of the demo, while the
+context is still fresh.</p>
+
+<ol>
+  <li>Re-open each <code>sme-feedback</code> issue and decide: fix now, fix later,
+      or won't fix (and say why in a comment, then close it)</li>
+  <li>For anything you're doing, go to <b>Process</b> in Project OS and click
+      <b>+ Add your own task</b> under the right phase — usually
+      <b>4. Notifications</b> or <b>5. Testing &amp; QA</b>, depending what the
+      feedback was about</li>
+  <li>Give it the GitHub issue's title, link the issue itself under
+      <b>Linked documents</b> on the new task, and set a realistic priority —
+      not everything the SME says is Critical</li>
+</ol>
+
+<h2><span class="num">05</span>Try it</h2>
+
+<ul class="check">
+  <li>Ran the full test suite and it's green, before booking anyone's time</li>
+  <li>Both demo accounts sign in without trouble, right now, not "should still work"</li>
+  <li>Walked through the four-step script yourself, once, start to finish, before
+      doing it live for someone else</li>
+  <li>GitHub's "New issue" page is open and ready in its own tab before the
+      session starts</li>
+  <li>Every piece of feedback — however small — became its own issue during the
+      session, not a mental note</li>
+  <li>Each issue that needs work has a matching task in Project OS within a day</li>
+</ul>
+
+<h2><span class="num">06</span>Troubleshooting</h2>
+
+<table>
+  <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+  <tr>
+    <td>Something breaks live that passed in tests</td>
+    <td>Usually stale demo data, not a real regression</td>
+    <td>Say so plainly — "that's my test data, not the app" — and carry on;
+        don't debug live on camera</td>
+  </tr>
+  <tr>
+    <td>SME feedback contradicts your own plan</td>
+    <td>Perfectly normal — that's what the review is for</td>
+    <td>Log it anyway. Disagreeing with feedback isn't a reason not to record
+        it — decide later, with a clear head</td>
+  </tr>
+  <tr>
+    <td>You forgot to log something until after the call ended</td>
+    <td>Happens to everyone the first time</td>
+    <td>Write it down from memory immediately, labelled the same way — late is
+        better than never, but do it now, not "later"</td>
+  </tr>
+  <tr>
+    <td>Not sure who to ask to be the SME</td>
+    <td>Overthinking "expert"</td>
+    <td>A Code Institute mentor, tutor, or even a friend who's organised a meal
+        train or rota for someone in real life all count — domain sense matters
+        more than a job title</td>
+  </tr>
+</table>
+
+<h2><span class="num">07</span>What this unlocks</h2>
+
+<p>This is the last task in <b>Phase 3 — Core CRUD</b>. Once it's done, that whole
+phase is complete: both Rota and Slot CRUD exist, every view is ownership-checked,
+and now an outside pair of eyes has confirmed the core loop actually makes sense
+to someone who isn't you. Phase 4 — Notifications is next, and the SME feedback
+you log here may well reshape what that phase actually needs to include.</p>
+
+<footer>
+  <b>Sarah J Hill</b> — Dragon Fire Design<br>
+  sarahjhill.com · sarah@sarahjhill.com<br>
+  Community Cooking Rota · Code Institute Full-Stack Capstone
+</footer>
+
+</div>
+</body>
+</html>
