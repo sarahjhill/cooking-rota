@@ -1,6 +1,6 @@
 # Community Cooking Rota
 
-**Live app:** _add your Heroku link here once deployed_
+**Live app:** https://community-cooking-rota-a0e405aa09f1.herokuapp.com/
 **Repository:** https://github.com/sarahjhill/community-cooking-rota
 
 ## Introduction
@@ -33,6 +33,16 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 `User 1—1 Profile` · `User 1—N Rota` (as organiser) · `Rota 1—N Slot` · `User 1—N Slot` (as cook, nullable until claimed)
 
 See `docs/erd.md` for the full breakdown.
+
+## Screenshots
+
+| Homepage | Rota detail (calendar view) |
+|---|---|
+| ![Homepage](docs/screenshots/home.png) | ![Rota detail page with the calendar-style date grid](docs/screenshots/rota-detail.png) |
+
+**Responsive check:** tested across desktop, laptop, tablet and mobile breakpoints using [Am I Responsive?](https://fireship.dev/amiresponsive?url=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/).
+
+![Responsive design check across devices](docs/screenshots/responsive.png)
 
 ## Future features
 
@@ -67,15 +77,43 @@ python manage.py runserver
 
 ## Testing
 
-_To be completed as the app is built — manual test table, automated test summary, and validator results (HTML, CSS, PEP8, Lighthouse) will go here._
+- **Automated tests:** 16 tests covering signup/login/logout, Rota CRUD, Slot CRUD, and ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page). Run them with:
+  ```bash
+  python manage.py test
+  ```
+- **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile, plus a live SME review session — see `docs/` for the review notes and the resulting GitHub issues labelled `sme-feedback`.
+- **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
 
 ## Deployment
 
-_Step-by-step Heroku deployment instructions will go here once deployed._
+Deployed to Heroku from this repository's `main` branch.
+
+1. Create the Heroku app and add a Postgres database (`heroku addons:create heroku-postgresql`, or via the Dashboard's Resources tab).
+2. Set the required Config Vars in the Heroku Dashboard (Settings → Config Vars) or via CLI:
+   - `SECRET_KEY` — a unique Django secret key (never the one used locally)
+   - `DATABASE_URL` — set automatically when the Postgres add-on is provisioned
+3. Push the code to Heroku:
+   ```bash
+   git push heroku main
+   ```
+   This triggers the build, runs `collectstatic` automatically, and (via this project's `Procfile`) runs migrations before starting the app:
+   ```
+   release: python manage.py migrate --noinput
+   web: gunicorn config.wsgi
+   ```
+4. **Important:** pushing to GitHub (`git push`) does **not** deploy to Heroku — `git push heroku main` is a separate step and must be run every time this repo is updated and the live site needs to reflect it.
+5. Static files (CSS/JS) are served in production by [WhiteNoise](https://whitenoise.readthedocs.io/), configured in `config/settings.py`.
 
 ## AI usage
 
-_A brief, honest reflection on where AI assistance helped with planning, scaffolding, code generation, debugging and testing will go here._
+AI (Claude, via Anthropic's Claude Code/Cowork) was used throughout this project as a planning, debugging and pair-programming aid, working from my own project brief and the Code Institute assessment guide:
+
+- **Planning:** drafting the initial MVP scope, data model and this README's structure from my brief.
+- **Debugging:** diagnosing and fixing issues during development, including Python indentation errors and a live 500 error on deployment (root-caused to a stale Heroku deploy, not the code itself).
+- **Feature build:** implementing the calendar-style date grid view on the rota page (template and CSS), and an ownership/permission-check audit across every CRUD view, with tests to match.
+- **Process:** helping prepare and run a live SME code-review session, with feedback captured as GitHub issues.
+
+All code was reviewed, tested and understood before being committed — AI assistance sped up implementation and caught issues, but the app's design decisions and final code are mine.
 
 ## Credits
 
