@@ -24,7 +24,7 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 - Cook: view a Rota's open slots; claim a slot via a form (no admin panel); cancel their own claimed slot.
 - Access control: only the organiser can edit/delete their own rota and its slots; only a slot's claimant (or the organiser) can un-claim it; anonymous users can't reach any of the above.
 - On-page notifications (Django messages) for every create/update/delete/claim action.
-- Responsive, accessible front end (Bootstrap 5 + custom CSS).
+- Responsive, accessible front end (100% custom CSS, no framework).
 - Automated tests for models, views and permissions, plus a manual test log.
 - Deployed to Heroku with `DEBUG=False` and secrets in environment variables.
 
@@ -44,9 +44,7 @@ See `docs/erd.md` for the full breakdown.
 |---|---|
 | ![Homepage](docs/screenshots/home.png) | ![Rota detail page with the calendar-style date grid](docs/screenshots/rota-detail.png) |
 
-**Responsive check:** tested across desktop, laptop, tablet and mobile breakpoints using [Am I Responsive?](https://fireship.dev/amiresponsive?url=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/).
-
-![Responsive design check across devices](docs/screenshots/responsive.png)
+**Responsive check:** the front end was tested by hand across desktop, tablet and mobile breakpoints (see the CSS media queries at 600px/700px, and the "Responsive styling pass" note above). A live, generated device-mockup check is available at [Am I Responsive?](https://fireship.dev/amiresponsive?url=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/).
 
 ## Future features
 
@@ -63,7 +61,7 @@ See `docs/erd.md` for the full breakdown.
 
 - Django 5 + Python 3
 - SQLite locally, PostgreSQL in production
-- Bootstrap 5 + custom CSS
+- Custom CSS (no framework) — CSS Grid, custom properties, and media queries at 600px/700px
 - Django's built-in auth (`User` + a `Profile` model with a role field)
 - Heroku for deployment
 
@@ -81,7 +79,7 @@ python manage.py runserver
 
 ## Testing
 
-- **Automated tests:** 16 tests covering signup/login/logout, Rota CRUD, Slot CRUD, and ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page). Run them with:
+- **Automated tests:** 30 tests across 7 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, and form validation (rejecting an end date before the start date, and a slot date already in the past). Run them with:
   ```bash
   python manage.py test
   ```
@@ -119,11 +117,13 @@ Deployed to Heroku from this repository's `main` branch.
 AI (Claude, via Anthropic's Claude Code/Cowork) was used throughout this project as a planning, debugging and pair-programming aid, working from my own project brief and the Code Institute assessment guide:
 
 - **Planning:** drafting the initial MVP scope, data model and this README's structure from my brief.
-- **Debugging:** diagnosing and fixing issues during development, including Python indentation errors and a live 500 error on deployment (root-caused to a stale Heroku deploy, not the code itself).
-- **Feature build:** implementing the calendar-style date grid view on the rota page (template and CSS), and an ownership/permission-check audit across every CRUD view, with tests to match.
-- **Process:** helping prepare and run a live SME code-review session, with feedback captured as GitHub issues.
+- **Debugging:** diagnosing and fixing issues during development, including Python indentation errors, a live 500 error on deployment (root-caused to a stale Heroku deploy, not the code itself), and a login/logout notification regression where Django's test-client login() shortcut bypassed the message middleware.
+- **Feature build:** implementing the calendar-style date grid view on the rota page (template and CSS), an ownership/permission-check audit across every CRUD view, on-page login/logout notifications (via Django signals), form validation (rejecting a backwards rota date range and a past slot date, with matching error styling), and a responsive-styling pass against the original wireframes — each with tests to match.
+- **Process:** helping prepare and run a live SME code-review session, with feedback captured as GitHub issues; and helping write up this project's full assessment reflection against the Code Institute LO1–LO8 guide.
 
 All code was reviewed, tested and understood before being committed — AI assistance sped up implementation and caught issues, but the app's design decisions and final code are mine.
+
+**Note on LO8.4 (automated unit tests):** the assessment guide's own wording names GitHub Copilot as the example tool for generating tests. The AI tool actually used throughout this project — including for the test suite — was Claude (Anthropic), not GitHub Copilot.
 
 ## Credits
 

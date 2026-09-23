@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -143,8 +143,9 @@ class SlotCRUDTests(TestCase):
 
     def test_organiser_can_add_a_slot(self):
         self.client.login(username="org1", password="Sturdy-Passphrase-42")
+        new_slot_date = date.today() + timedelta(days=5)
         response = self.client.post(reverse("rota:slot_create", args=[self.rota.pk]), {
-            "date": "2026-01-05",
+            "date": new_slot_date.isoformat(),
             "notes": "",
         })
         self.assertEqual(self.rota.slots.count(), 2)
@@ -300,3 +301,53 @@ class NotificationTests(TestCase):
             reverse("rota:slot_cancel", args=[self.slot.pk]), follow=True
         )
         self.assertContains(response, "Date released")
+
+
+class FormValidationTests(TestCase):
+    """Forms reject bad input with a clear message, not a 500 or a silent save."""
+
+    def setUp(self):
+        self.organiser = User.objects.create_user(username="organiser3", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.organiser, role="organiser")
+        self.rota = Rota.objects.create(
+            organiser=self.organiser,
+            recipient_name="Test Recipient",
+            start_date=date(2026, 10, 1),
+            end_date=date(2026, 10, 14),
+        )
+
+    def test_rota_end_date_before_start_date_is_rejected(self):
+        self.client.login(username="organiser3", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:rota_create"), {
+            "recipient_name": "Backwards Rota",
+            "start_date": "2026-11-14",
+            "end_date": "2026-11-01",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "<li>The end date can't be before the start date.</li>",
+            html=True,
+        )
+        self.assertFalse(Rota.objects.filter(recipient_name="Backwards Rota").exists())
+
+    def test_slot_date_in_the_past_is_rejected(self):
+        self.client.login(username="organiser3", password="Sturdy-Passphrase-42")
+        yesterday = date.today() - timedelta(days=1)
+        response = self.client.post(
+            reverse("rota:slot_create", args=[self.rota.pk]),
+            {"date": yesterday.isoformat(), "notes": ""},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "already passed")
+        self.assertFalse(Slot.objects.filter(rota=self.rota, date=yesterday).exists())
+
+    def test_valid_rota_is_still_accepted(self):
+        self.client.login(username="organiser3", password="Sturdy-Passphrase-42")
+        response = self.client.post(reverse("rota:rota_create"), {
+            "recipient_name": "Valid Rota",
+            "start_date": "2026-11-01",
+            "end_date": "2026-11-14",
+        }, follow=True)
+        self.assertContains(response, "created.")
+        self.assertTrue(Rota.objects.filter(recipient_name="Valid Rota").exists())

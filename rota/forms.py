@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 from .models import Profile, Rota, Slot
 
 
@@ -44,7 +47,22 @@ class RotaForm(forms.ModelForm):
             "dietary_notes": forms.Textarea(attrs={"rows": 3}),
         }
 
+    def clean(self):
+        """A rota that ends before it starts isn't something the model can catch on its own."""
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+
+        if start_date and end_date and end_date < start_date:
+            raise ValidationError(
+                "The end date can't be before the start date."
+            )
+
+        return cleaned_data
+
+
 class SlotForm(forms.ModelForm):
+    """The fields used to create or edit a single cooking slot."""
 
     class Meta:
         model = Slot
@@ -53,3 +71,12 @@ class SlotForm(forms.ModelForm):
             "date": forms.DateInput(attrs={"type": "date"}),
             "notes": forms.Textarea(attrs={"rows": 2}),
         }
+
+    def clean_date(self):
+        """No point offering a cooking date that's already gone."""
+        date = self.cleaned_data.get("date")
+
+        if date and date < timezone.localdate():
+            raise ValidationError("This date has already passed — pick a date from today onwards.")
+
+        return date
