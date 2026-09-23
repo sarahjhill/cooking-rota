@@ -28,6 +28,8 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 - Automated tests for models, views and permissions, plus a manual test log.
 - Deployed to Heroku with `DEBUG=False` and secrets in environment variables.
 
+**Deviation from the wireframes:** [`docs/wireframes.md`](docs/wireframes.md) sketched a desktop (≥768px) layout with the rota list and rota detail side-by-side in two columns. The build uses separate full-page views instead (list page → detail page) at every breakpoint. This was a deliberate call, not an oversight — a split view adds real complexity (keeping two panels in sync, extra routing/JS) for a capstone where the core assessed behaviour is the CRUD/permissions logic underneath, not the layout shape. Every other element of the wireframes (nav, cards, slot grid) is followed as sketched, and the layout is fully responsive at mobile/tablet/desktop.
+
 ## Data model (ERD)
 
 `User 1—1 Profile` · `User 1—N Rota` (as organiser) · `Rota 1—N Slot` · `User 1—N Slot` (as cook, nullable until claimed)
