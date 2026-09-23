@@ -125,6 +125,14 @@ All code was reviewed, tested and understood before being committed — AI assis
 
 **Note on LO8.4 (automated unit tests):** the assessment guide's own wording names GitHub Copilot as the example tool for generating tests. The AI tool actually used throughout this project — including for the test suite — was Claude (Anthropic), not GitHub Copilot.
 
+## Licence
+
+The source code in this repository (models, views, forms, templates, CSS) is available to read, reuse and adapt for your own projects — for learning, reference, or as a starting point for something new.
+
+The Community Cooking Rota concept itself, along with this project's name and branding, is not licensed for reuse — please don't publish a copy or a close clone under this name. See [`LICENSE`](LICENSE) for the full text.
+
 ## Credits
 
 Planning document and this MVP scope were developed with Claude (Anthropic) as a planning aid, working from the Code Institute assessment guide and Sarah Hill's own project brief.
+
+Huge thanks to my amazing tutor support at Code Institute, Tim and Marko, for their guidance throughout this project — and to my amazing partner, for the inspiration and motivation to fulfil my full potential.

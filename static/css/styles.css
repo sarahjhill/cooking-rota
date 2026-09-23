@@ -180,6 +180,11 @@ body {
     margin: 0;
 }
 
+.site-footer .licence-line {
+    padding-top: 0;
+    font-size: 0.82rem;
+}
+
 .lead {
     font-size: 1.15rem;
     color: var(--muted);

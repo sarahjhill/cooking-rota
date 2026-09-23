@@ -1,0 +1,31 @@
+Community Cooking Rota — Licence
+=================================
+
+Copyright (c) 2026 Sarah Hill. All rights reserved, with the following
+permissions.
+
+What you can do
+----------------
+The source code in this repository — including the Django models, views,
+forms, templates and CSS — may be read, reused and adapted for your own
+separate projects: for learning, for reference, or as a starting point for
+something of your own.
+
+What you can't do
+------------------
+The product concept itself — a Community Cooking Rota: an app for
+organising a rota of home-cooked meals for someone going through a hard
+patch — along with this project's name and branding, is not licensed for
+reuse. Please don't publish a copy or a close clone of this idea under this
+name, or represent the concept as your own.
+
+No warranty
+-----------
+This code is provided "as is", without warranty of any kind, express or
+implied. Sarah Hill is not liable for any claim, damages, or other
+liability arising from its use.
+
+Questions
+---------
+Want to use more than this allows, or not sure if something's covered?
+Just ask: hantaah21@gmail.com
