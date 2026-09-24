@@ -36,13 +36,13 @@
 
                 {% if user == rota.organiser %}
                     <div class="calendar-day__actions">
-                        <a class="btn btn-small" href="{% url 'rota:slot_update' slot.pk %}">Edit</a>
-                        <a class="btn btn-small btn-danger" href="{% url 'rota:slot_delete' slot.pk %}">Delete</a>
+                        <a class="btn btn-small" href="{% url 'rota:slot_update' slot.pk %}" aria-label="Edit {{ slot.date }}">Edit</a>
+                        <a class="btn btn-small btn-danger" href="{% url 'rota:slot_delete' slot.pk %}" aria-label="Delete {{ slot.date }}">Delete</a>
                     </div>
                 {% elif not slot.cook and user.is_authenticated and user.profile.role == "cook" %}
-                    <a class="btn btn-small" href="{% url 'rota:slot_claim' slot.pk %}">Claim this date</a>
+                    <a class="btn btn-small" href="{% url 'rota:slot_claim' slot.pk %}" aria-label="Claim {{ slot.date }}">Claim this date</a>
                 {% elif slot.cook == user %}
-                    <a class="btn btn-small" href="{% url 'rota:slot_cancel' slot.pk %}">Cancel my date</a>
+                    <a class="btn btn-small" href="{% url 'rota:slot_cancel' slot.pk %}" aria-label="Cancel my date on {{ slot.date }}">Cancel my date</a>
                 {% endif %}
             </li>
         {% endfor %}

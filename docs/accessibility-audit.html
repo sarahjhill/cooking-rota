@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Accessibility audit — Community Cooking Rota</title>
+<style>
+  :root { --flame:#b85c38; --flame-dark:#8a4128; --paper:#f8f5f1; --panel:#fff; --ink:#1f2933; --muted:#52606d; --border:#e5e7eb; --good:#2f7d5b; --good-bg:#e8f5ee; --warn:#b02f2f; --warn-bg:#fbe8e8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; }
+  .wrap { max-width:820px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  header.letterhead { border-bottom:4px solid var(--flame); padding-bottom:1.25rem; margin-bottom:2rem; }
+  header.letterhead h1 { margin:0 0 0.35rem; font-size:1.6rem; color:var(--flame-dark); }
+  header.letterhead p { margin:0; color:var(--muted); font-size:0.95rem; }
+  .sheet { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:1.5rem 1.75rem; margin-bottom:1.5rem; box-shadow:0 4px 14px rgba(31,41,51,0.05); }
+  h2 { margin-top:0; font-size:1.15rem; color:var(--flame-dark); }
+  code { background:#f1ede7; border:1px solid var(--border); border-radius:4px; padding:0.12rem 0.4rem; font-size:0.88em; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  pre { background:#26292e; color:#f3f1ea; padding:0.9rem 1rem; border-radius:8px; overflow-x:auto; font-size:0.82rem; line-height:1.5; margin:0.6rem 0; }
+  pre code { background:none; border:none; padding:0; color:inherit; }
+  table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.9rem; }
+  th, td { text-align:left; padding:0.5rem 0.6rem; border-bottom:1px solid var(--border); vertical-align:top; }
+  th { color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; }
+  .pass { color:var(--good); font-weight:700; }
+  .tag { display:inline-block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.15rem 0.55rem; border-radius:999px; margin-left:0.5rem; vertical-align:middle; }
+  .tag--fixed { background:var(--good-bg); color:var(--good); }
+  .tag--note { background:#fdf1de; color:#a15c00; }
+  ul.plain { margin:0.4rem 0; padding-left:1.2rem; }
+  ul.plain li { margin:0.35rem 0; }
+  figure { margin: 0.75rem 0; }
+  figure img { width:100%; border-radius:8px; border:1px solid var(--border); display:block; }
+  figcaption { font-size:0.85rem; color:var(--muted); margin-top:0.4rem; }
+  .dod { background:var(--good-bg); border-left:4px solid var(--good); border-radius:6px; padding:0.8rem 1rem; margin-top:1rem; font-size:0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="letterhead">
+    <h1>Accessibility audit — labels, contrast, keyboard nav</h1>
+    <p>A WCAG 2.1 AA-focused audit of the codebase, the fixes made, and verification steps. Linked from the README's Testing section.</p>
+  </header>
+
+  <div class="sheet">
+    <h2>Fix 1 — ambiguous link text for screen readers <span class="tag tag--fixed">Fixed</span></h2>
+    <p><strong>File:</strong> <code>templates/rota/rota_detail.html</code></p>
+    <p>Every date on a rota has its own "Edit" / "Delete" / "Claim this date" / "Cancel my date" button. Sighted users can tell them apart by position on the page, but a screen reader user browsing by a list of links hears the same word repeated with no way to tell which date each one belongs to (WCAG 2.4.4, Link Purpose in Context).</p>
+    <figure>
+      <img src="screenshots/accessibility-rota-detail.jpg" alt="Rota detail page showing four date cards, each with identical Edit and Delete buttons" />
+      <figcaption>Four dates, each with an "Edit" and "Delete" button that previously read identically to a screen reader.</figcaption>
+    </figure>
+    <p>Added an <code>aria-label</code> to each link that includes the date, so a screen reader announces e.g. "Edit Oct. 12, 2026" instead of just "Edit". The visible button text is unchanged.</p>
+    <pre><code>&lt;a class="btn btn-small" href="{% url 'rota:slot_update' slot.pk %}" aria-label="Edit {{ slot.date }}"&gt;Edit&lt;/a&gt;
+&lt;a class="btn btn-small btn-danger" href="{% url 'rota:slot_delete' slot.pk %}" aria-label="Delete {{ slot.date }}"&gt;Delete&lt;/a&gt;
+&lt;a class="btn btn-small" href="{% url 'rota:slot_claim' slot.pk %}" aria-label="Claim {{ slot.date }}"&gt;Claim this date&lt;/a&gt;
+&lt;a class="btn btn-small" href="{% url 'rota:slot_cancel' slot.pk %}" aria-label="Cancel my date on {{ slot.date }}"&gt;Cancel my date&lt;/a&gt;</code></pre>
+  </div>
+
+  <div class="sheet">
+    <h2>Fix 2 — keyboard focus not distinguishable on invalid form fields <span class="tag tag--fixed">Fixed</span></h2>
+    <p><strong>File:</strong> <code>static/css/styles.css</code></p>
+    <p>When a field fails validation, it gets a permanent red outline (via <code>box-shadow</code>) to flag the problem — but the CSS also set <code>outline: 2px solid transparent</code> on that same field, which silently cancelled the browser's own focus ring. A keyboard user tabbing onto an invalid field had no way to tell "this field currently has my focus" from "this field is just invalid" (WCAG 2.4.7, Focus Visible).</p>
+    <pre><code>.form-card ul.errorlist + p input:focus-visible,
+.form-card ul.errorlist + p select:focus-visible,
+.form-card ul.errorlist + p textarea:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}</code></pre>
+    <p>Also widened the site's general focus-ring rule, which previously only covered links and buttons, to explicitly cover text inputs, selects and textareas:</p>
+    <pre><code>a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}</code></pre>
+    <figure>
+      <img src="screenshots/accessibility-signup-focus.jpg" alt="Sign up form with the Username field showing a visible blue keyboard-focus outline" />
+      <figcaption>The sign-up form, tabbed to the Username field — a visible focus ring is now guaranteed site-wide, including on invalid fields.</figcaption>
+    </figure>
+  </div>
+
+  <div class="sheet">
+    <h2>Fix 3 — login error not announced to screen readers <span class="tag tag--fixed">Fixed</span></h2>
+    <p><strong>File:</strong> <code>templates/registration/login.html</code></p>
+    <p>A failed login re-renders the page with "That username and password don't match." above the form, but nothing marked it as an error, so a screen reader user wouldn't be told anything went wrong unless they happened to read past it (WCAG 3.3.1, Error Identification). Added <code>role="alert"</code> so it's announced automatically:</p>
+    <pre><code>&lt;p class="form-error" role="alert"&gt;That username and password don't match. Please try again.&lt;/p&gt;</code></pre>
+  </div>
+
+  <div class="sheet">
+    <h2>Fix 4 — homepage caption never stops changing <span class="tag tag--fixed">Fixed</span> <span class="tag tag--note">Bonus catch</span></h2>
+    <p><strong>File:</strong> <code>static/js/cooking-scene.js</code></p>
+    <p>The decorative caption under the homepage animation rotates every 4 seconds, forever, with no way to stop it. It's inside <code>aria-hidden="true"</code> so screen readers never see it, but WCAG 2.2.2 (Pause, Stop, Hide) still applies to auto-updating content visible for more than 5 seconds. Added a check for the user's reduced-motion preference:</p>
+    <pre><code>const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)"
+).matches;
+if (prefersReducedMotion) return;</code></pre>
+  </div>
+
+  <div class="sheet">
+    <h2>Colour contrast — checked, all pass</h2>
+    <p>Every text/background pairing on the site was checked against WCAG AA's 4.5:1 minimum for normal text. All pass — the lowest is 4.54:1 (white button text on the primary orange).</p>
+    <table>
+      <tr><th>Element</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>Required</th><th>Pass?</th></tr>
+      <tr><td>Body text</td><td>#1f2933</td><td>#f8f5f1 (page)</td><td>13.58:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>Body text on cards</td><td>#1f2933</td><td>#ffffff</td><td>14.76:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>Muted text (dates, captions)</td><td>#52606d</td><td>#f8f5f1</td><td>5.94:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>Muted text on cards</td><td>#52606d</td><td>#ffffff</td><td>6.46:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>Brand / heading text</td><td>#8a4128</td><td>#ffffff</td><td>7.32:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>White text on primary button</td><td>#ffffff</td><td>#b85c38</td><td>4.54:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>White text on button hover</td><td>#ffffff</td><td>#8a4128</td><td>7.32:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>White text on danger button</td><td>#ffffff</td><td>#b3261e</td><td>6.54:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>Error message text</td><td>#B02F2F</td><td>#FBE8E8</td><td>5.41:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+      <tr><td>"Claimed" status text</td><td>#2f7d5b</td><td>#f8f5f1</td><td>4.59:1</td><td>4.5:1</td><td class="pass">Pass</td></tr>
+    </table>
+    <figure>
+      <img src="screenshots/accessibility-homepage.jpg" alt="Homepage showing the rota list and headings in the site's colour palette" />
+      <figcaption>The homepage's actual colour palette in use — everything shown here passes the AA contrast check above.</figcaption>
+    </figure>
+  </div>
+
+  <div class="sheet">
+    <h2>Labels — checked</h2>
+    <ul class="plain">
+      <li>All form fields use Django's built-in form rendering, which auto-generates a <code>&lt;label for="..."&gt;</code> tied to every input's <code>id</code> — this already worked correctly.</li>
+      <li>No images anywhere in the site need alt text — the only graphics (the pot/flame animation) are correctly hidden from screen readers with <code>aria-hidden="true"</code>, since they're purely decorative.</li>
+      <li>The main navigation has <code>aria-label="Main navigation"</code>, and there's a working "Skip to content" link.</li>
+      <li>The four per-date action links were the one real labelling gap — see Fix 1 above.</li>
+      <li><strong>Left as an optional improvement, not fixed:</strong> the "I am signing up as" radio choice on the sign-up form is visually grouped and labelled, but isn't wrapped in a <code>&lt;fieldset&gt;&lt;legend&gt;</code>, the more formally correct way to group radio buttons for screen readers. Not changed here because it means restructuring how that one field renders (Django's default <code>form.as_p</code> doesn't support it directly), which risks affecting the error-highlighting CSS on that page — a minor, AAA-adjacent polish item rather than a failing check.</li>
+    </ul>
+  </div>
+
+  <div class="sheet">
+    <h2>Keyboard navigation — verification steps</h2>
+    <ol class="plain">
+      <li>Run <code>python manage.py runserver</code> and open <code>http://127.0.0.1:8000/</code>.</li>
+      <li>Click the page background, then press <strong>Tab</strong> repeatedly — the first stop is the "Skip to content" link (visible when focused), then the nav, then the page content, in a sensible order.</li>
+      <li>On a rota with dates, tab to an "Edit"/"Delete" button and press <strong>Enter</strong> — confirm it activates, with a clear visible outline on whichever button has focus.</li>
+      <li>On the sign-up page, tab into "I am signing up as" and use the <strong>arrow keys</strong> to move between Organiser and Cook.</li>
+      <li>Submit a form with a required field blank — confirm the invalid field shows a distinct outline when focused versus when it's just sitting there invalid.</li>
+      <li>Try logging in with a wrong password — confirm the error appears and (ideally, tested with VoiceOver: <code>Cmd+F5</code>) is announced automatically.</li>
+    </ol>
+  </div>
+
+  <div class="dod">
+    <strong>Result:</strong> ambiguous link labels fixed, keyboard focus guaranteed visible everywhere including invalid fields, login errors announced to assistive tech, colour contrast checked and confirmed passing site-wide.
+  </div>
+</div>
+</body>
+</html>

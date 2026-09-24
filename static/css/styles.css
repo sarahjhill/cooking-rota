@@ -124,7 +124,10 @@ h1, h2, h3 {
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
     outline: 3px solid var(--primary);
     outline-offset: 2px;
 }
@@ -337,6 +340,17 @@ body {
     border-color: #B02F2F;
     outline: 2px solid transparent;
     box-shadow: 0 0 0 1px #B02F2F;
+}
+
+/* The transparent outline above always shows the red box-shadow, whether
+   or not the field is focused — so a keyboard user tabbing onto an
+   invalid field needs a stronger, distinct indicator to tell "focused"
+   apart from "just invalid". */
+.form-card ul.errorlist + p input:focus-visible,
+.form-card ul.errorlist + p select:focus-visible,
+.form-card ul.errorlist + p textarea:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
 }
 
 .form-error {

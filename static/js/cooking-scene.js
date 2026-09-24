@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
     "Something warm for someone who needs it…",
   ];
 
+  // Respect a user's reduced-motion preference — the caption text change
+  // is a small thing, but there's no reason to keep it cycling forever
+  // for someone who's asked for less motion/animation on their system.
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (prefersReducedMotion) return;
+
   let index = 0;
   setInterval(() => {
     index = (index + 1) % dishes.length;

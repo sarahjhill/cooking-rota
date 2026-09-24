@@ -258,6 +258,7 @@ python manage.py runserver
   - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/cooking-rota/issues/11) (Medium)
   - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/cooking-rota/issues/12) (Low)
 - **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
+- **Accessibility (WCAG 2.1 AA):** audited for labelling, colour contrast and keyboard navigation — full write-up, contrast table and screenshots in [the accessibility audit](docs/accessibility-audit.html). In short: colour contrast already passed everywhere (lowest is 4.54:1 against a 4.5:1 requirement); one real labelling gap was found and fixed (per-date action buttons now include the date in their accessible name for screen readers); and a keyboard-focus bug was fixed where an invalid form field's error outline silently hid the browser's own focus ring.
 
 ## Deployment
 
