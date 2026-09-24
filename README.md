@@ -1,9 +1,9 @@
 # Community Cooking Rota
 
-**Live app:** https://community-cooking-rota-a0e405aa09f1.herokuapp.com/
-**Repository:** https://github.com/sarahjhill/cooking-rota
+**Live app:** <a href="https://community-cooking-rota-a0e405aa09f1.herokuapp.com/" target="_blank" rel="noopener">community-cooking-rota-a0e405aa09f1.herokuapp.com</a>
+**Repository:** <a href="https://github.com/sarahjhill/cooking-rota" target="_blank" rel="noopener">github.com/sarahjhill/cooking-rota</a>
 
-Developer: Sarah Hill ([sarahjhill](https://github.com/sarahjhill))
+Developer: Sarah Hill (<a href="https://github.com/sarahjhill" target="_blank" rel="noopener">sarahjhill</a>)
 
 ![Screenshot of the Community Cooking Rota homepage](docs/screenshots/home.png)
 
@@ -65,7 +65,7 @@ Give a small support network (family, friends, neighbours) a single, accountable
 
 **Wireframes**
 
-Low-fi wireframes for the core screens (homepage, rota list, rota detail/slot list) were sketched before development, covering the mobile-first layout and the desktop breakpoint. See [`docs/wireframes.md`](docs/wireframes.md) for the full set.
+Low-fi wireframes for the core screens (homepage, rota list, rota detail/slot list) were sketched before development, covering the mobile-first layout and the desktop breakpoint. See <a href="docs/wireframes.md" target="_blank" rel="noopener"><code>docs/wireframes.md</code></a> for the full set.
 
 **Deviation from the wireframes:** the wireframes sketched a desktop (≥768px) layout with the rota list and rota detail side-by-side in two columns. The build uses separate full-page views instead (list page → detail page) at every breakpoint. This was a deliberate call, not an oversight — a split view adds real complexity (keeping two panels in sync, extra routing/JS) for a capstone where the core assessed behaviour is the CRUD/permissions logic underneath, not the layout shape. Every other element of the wireframes (nav, cards, slot grid) is followed as sketched, and the layout is fully responsive at mobile/tablet/desktop.
 
@@ -195,26 +195,26 @@ erDiagram
 - Only a Rota's organiser can create/edit/delete that Rota and its Slots.
 - Only a Slot's claimant (or the Rota's organiser) can un-claim it.
 
-See [`docs/erd.md`](docs/erd.md) for the full field-by-field breakdown, and the [auto-generated architecture diagram on GitDiagram](https://gitdiagram.com/sarahjhill/cooking-rota) for how requests actually flow through the app (URLs → views → access control → models).
+See <a href="docs/erd.md" target="_blank" rel="noopener"><code>docs/erd.md</code></a> for the full field-by-field breakdown, and the <a href="https://gitdiagram.com/sarahjhill/cooking-rota" target="_blank" rel="noopener">auto-generated architecture diagram on GitDiagram</a> for how requests actually flow through the app (URLs → views → access control → models).
 
 ## Tools & Technologies
 
 | Tool / Tech | Use |
 |---|---|
-| [Python](https://www.python.org/) | Back-end programming language |
-| [Django](https://www.djangoproject.com/) | Python web framework used for the whole site |
-| [PostgreSQL](https://www.postgresql.org/) | Relational database (production, via Heroku) |
-| [SQLite](https://www.sqlite.org/) | Relational database (local development) |
-| [Gunicorn](https://gunicorn.org/) | Python WSGI HTTP server, used in production |
-| [WhiteNoise](https://whitenoise.readthedocs.io/) | Serves static files (CSS/JS) in production |
-| [Heroku](https://www.heroku.com/) | Hosting the deployed app |
-| [Git](https://git-scm.com/) | Version control (`git add`, `git commit`, `git push`) |
-| [GitHub](https://github.com/) | Secure online code storage and issue tracking |
-| [VS Code](https://code.visualstudio.com/) | Local IDE for development |
+| <a href="https://www.python.org/" target="_blank" rel="noopener">Python</a> | Back-end programming language |
+| <a href="https://www.djangoproject.com/" target="_blank" rel="noopener">Django</a> | Python web framework used for the whole site |
+| <a href="https://www.postgresql.org/" target="_blank" rel="noopener">PostgreSQL</a> | Relational database (production, via Heroku) |
+| <a href="https://www.sqlite.org/" target="_blank" rel="noopener">SQLite</a> | Relational database (local development) |
+| <a href="https://gunicorn.org/" target="_blank" rel="noopener">Gunicorn</a> | Python WSGI HTTP server, used in production |
+| <a href="https://whitenoise.readthedocs.io/" target="_blank" rel="noopener">WhiteNoise</a> | Serves static files (CSS/JS) in production |
+| <a href="https://www.heroku.com/" target="_blank" rel="noopener">Heroku</a> | Hosting the deployed app |
+| <a href="https://git-scm.com/" target="_blank" rel="noopener">Git</a> | Version control (`git add`, `git commit`, `git push`) |
+| <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> | Secure online code storage and issue tracking |
+| <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code</a> | Local IDE for development |
 | HTML5 / CSS3 | Site structure and styling (no CSS framework) |
-| [Django Template Language](https://docs.djangoproject.com/en/5.2/ref/templates/language/) | Server-rendered page templates |
-| [Mermaid](https://mermaid.js.org/) | Interactive ERD, rendered directly in this README on GitHub |
-| [Claude (Anthropic)](https://claude.com/) | Planning, debugging and pair-programming assistance throughout — see [AI usage](#ai-usage) |
+| <a href="https://docs.djangoproject.com/en/5.2/ref/templates/language/" target="_blank" rel="noopener">Django Template Language</a> | Server-rendered page templates |
+| <a href="https://mermaid.js.org/" target="_blank" rel="noopener">Mermaid</a> | Interactive ERD, rendered directly in this README on GitHub |
+| <a href="https://claude.com/" target="_blank" rel="noopener">Claude (Anthropic)</a> | Planning, debugging and pair-programming assistance throughout — see [AI usage](#ai-usage) |
 
 ## Screenshots
 
@@ -222,7 +222,7 @@ See [`docs/erd.md`](docs/erd.md) for the full field-by-field breakdown, and the 
 |---|---|
 | ![Homepage](docs/screenshots/home.png) | ![Rota detail page with the calendar-style date grid](docs/screenshots/rota-detail.png) |
 
-**Responsive check:** the front end was tested by hand across desktop, tablet and mobile breakpoints (see the CSS media queries at 600px/700px, and the "Responsive styling pass" note above). A live, generated device-mockup check is available at [Am I Responsive?](https://fireship.dev/amiresponsive?url=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/).
+**Responsive check:** the front end was tested by hand across desktop, tablet and mobile breakpoints (see the CSS media queries at 600px/700px, and the "Responsive styling pass" note above). A live, generated device-mockup check is available at <a href="https://fireship.dev/amiresponsive?url=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/" target="_blank" rel="noopener">Am I Responsive?</a>.
 
 ## Tech stack
 
@@ -246,26 +246,47 @@ python manage.py runserver
 
 ## Testing
 
-- **Automated tests:** 30 tests across 7 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, and form validation (rejecting an end date before the start date, a new rota starting in the past, and a slot date already in the past). Run them with:
-  ```bash
-  python manage.py test
-  ```
+### Automated tests
 
-  ![All 30 automated tests passing](docs/screenshots/automated-tests-passing.png)
-- **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile.
-- **SME review:** a live walkthrough of the app with a Subject Matter Expert, run against the [SME code review demo guide](docs/sme-code-review-demo.html). Feedback was logged as real GitHub issues (labelled [`sme-feedback`](https://github.com/sarahjhill/cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback)) rather than just discussed and forgotten. Full write-up below — click the image to read the whole document:
+30 tests across 7 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, and form validation (rejecting an end date before the start date, a new rota starting in the past, and a slot date already in the past). Run them with:
 
-  [![SME code review findings — click to read the full write-up](docs/screenshots/sme-review-findings.png)](docs/sme-review-findings.md)
+```bash
+python manage.py test
+```
 
-  - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/cooking-rota/issues/11) (Medium)
-  - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/cooking-rota/issues/12) (Low)
-- **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
-- **Accessibility (WCAG 2.1 AA):** audited for labelling, colour contrast and keyboard navigation. Full write-up and the contrast table are in [the accessibility audit](docs/accessibility-audit.md); in short, colour contrast already passed everywhere (lowest is 4.54:1 against a 4.5:1 requirement), one real labelling gap was found and fixed (per-date action buttons now include the date in their accessible name for screen readers), and a keyboard-focus bug was fixed where an invalid form field's error outline silently hid the browser's own focus ring.
+| Result |
+|---|
+| ![All 30 automated tests passing](docs/screenshots/automated-tests-passing.png) |
+| A real terminal run, all 30 passing. |
 
-  | Sign-up form — keyboard focus visible | Homepage — colour palette | Rota detail — before the label fix |
-  |---|---|---|
-  | ![Sign-up form with the Username field showing a visible keyboard-focus outline](docs/screenshots/accessibility-signup-focus.jpg) | ![Homepage showing the rota list and headings in the site's colour palette](docs/screenshots/accessibility-homepage.jpg) | ![Rota detail page showing four date cards, each with identical Edit and Delete buttons](docs/screenshots/accessibility-rota-detail.jpg) |
-  | Native browser focus ring, now guaranteed everywhere via CSS. | Every colour pairing here passes 4.5:1 contrast. | The "Edit"/"Delete" buttons that read identically to a screen reader before `aria-label` was added. |
+### Manual testing
+
+Every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile.
+
+### SME review
+
+A live walkthrough of the app with a Subject Matter Expert, run against the <a href="docs/sme-code-review-demo.html" target="_blank" rel="noopener">SME code review demo guide</a>. Feedback was logged as real GitHub issues (labelled <a href="https://github.com/sarahjhill/cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback" target="_blank" rel="noopener"><code>sme-feedback</code></a>) rather than just discussed and forgotten.
+
+| Findings |
+|---|
+| <a href="docs/sme-review-findings.md" target="_blank" rel="noopener"><img src="docs/screenshots/sme-review-findings.png" alt="SME code review findings — click to read the full write-up"></a> |
+| Click the image for the full write-up. |
+
+- <a href="https://github.com/sarahjhill/cooking-rota/issues/11" target="_blank" rel="noopener">Issue #11 — No way to contact the cook or organiser from a rota page</a> (Medium)
+- <a href="https://github.com/sarahjhill/cooking-rota/issues/12" target="_blank" rel="noopener">Issue #12 — Claimed slots show a date but no time</a> (Low)
+
+### Validators
+
+HTML, CSS and Python (PEP8) validator results to be added here.
+
+### Accessibility (WCAG 2.1 AA)
+
+Audited for labelling, colour contrast and keyboard navigation. Full write-up and the contrast table are in <a href="docs/accessibility-audit.md" target="_blank" rel="noopener">the accessibility audit</a>; in short, colour contrast already passed everywhere (lowest is 4.54:1 against a 4.5:1 requirement), one real labelling gap was found and fixed (per-date action buttons now include the date in their accessible name for screen readers), and a keyboard-focus bug was fixed where an invalid form field's error outline silently hid the browser's own focus ring.
+
+| Sign-up form — keyboard focus visible | Homepage — colour palette | Rota detail — before the label fix |
+|---|---|---|
+| ![Sign-up form with the Username field showing a visible keyboard-focus outline](docs/screenshots/accessibility-signup-focus.jpg) | ![Homepage showing the rota list and headings in the site's colour palette](docs/screenshots/accessibility-homepage.jpg) | ![Rota detail page showing four date cards, each with identical Edit and Delete buttons](docs/screenshots/accessibility-rota-detail.jpg) |
+| Native browser focus ring, now guaranteed everywhere via CSS. | Every colour pairing here passes 4.5:1 contrast. | The "Edit"/"Delete" buttons that read identically to a screen reader before `aria-label` was added. |
 
 ## Deployment
 
@@ -285,7 +306,7 @@ Deployed to Heroku from this repository's `main` branch.
    web: gunicorn config.wsgi
    ```
 4. **Important:** pushing to GitHub (`git push`) does **not** deploy to Heroku — `git push heroku main` is a separate step and must be run every time this repo is updated and the live site needs to reflect it.
-5. Static files (CSS/JS) are served in production by [WhiteNoise](https://whitenoise.readthedocs.io/), configured in `config/settings.py`.
+5. Static files (CSS/JS) are served in production by <a href="https://whitenoise.readthedocs.io/" target="_blank" rel="noopener">WhiteNoise</a>, configured in `config/settings.py`.
 
 ## Local vs Deployment
 
@@ -316,11 +337,11 @@ The Community Cooking Rota concept itself, along with this project's name and br
 
 | Source | Notes |
 |---|---|
-| [Claude (Anthropic)](https://claude.com/) | Planning aid, debugging support and pair-programming assistance throughout — see [AI usage](#ai-usage) for the full breakdown |
+| <a href="https://claude.com/" target="_blank" rel="noopener">Claude (Anthropic)</a> | Planning aid, debugging support and pair-programming assistance throughout — see [AI usage](#ai-usage) for the full breakdown |
 | `cardiff-community-meals` | The original spreadsheet/WhatsApp-based rota this project's idea and concept is rebuilt from |
-| [Django documentation](https://docs.djangoproject.com/) | Reference for `django.contrib.auth`, forms, class-based patterns and deployment configuration |
-| [MDN Web Docs](https://developer.mozilla.org/) | CSS Grid and accessibility reference |
-| [Code Institute](https://codeinstitute.net/) | Assessment guide and project brief structure |
+| <a href="https://docs.djangoproject.com/" target="_blank" rel="noopener">Django documentation</a> | Reference for `django.contrib.auth`, forms, class-based patterns and deployment configuration |
+| <a href="https://developer.mozilla.org/" target="_blank" rel="noopener">MDN Web Docs</a> | CSS Grid and accessibility reference |
+| <a href="https://codeinstitute.net/" target="_blank" rel="noopener">Code Institute</a> | Assessment guide and project brief structure |
 
 ### Media
 
