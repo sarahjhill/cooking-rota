@@ -253,12 +253,17 @@ python manage.py runserver
 - **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile.
 - **SME review:** a live walkthrough of the app with a Subject Matter Expert, run against the [SME code review demo guide](docs/sme-code-review-demo.html). Feedback was logged as real GitHub issues (labelled [`sme-feedback`](https://github.com/sarahjhill/cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback)) rather than just discussed and forgotten. Full write-up below — click the image to read the whole document:
 
-  [![SME code review findings — click to read the full write-up](docs/screenshots/sme-review-findings.png)](docs/sme-review-findings.html)
+  [![SME code review findings — click to read the full write-up](docs/screenshots/sme-review-findings.png)](docs/sme-review-findings.md)
 
   - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/cooking-rota/issues/11) (Medium)
   - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/cooking-rota/issues/12) (Low)
 - **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
-- **Accessibility (WCAG 2.1 AA):** audited for labelling, colour contrast and keyboard navigation — full write-up, contrast table and screenshots in [the accessibility audit](docs/accessibility-audit.html). In short: colour contrast already passed everywhere (lowest is 4.54:1 against a 4.5:1 requirement); one real labelling gap was found and fixed (per-date action buttons now include the date in their accessible name for screen readers); and a keyboard-focus bug was fixed where an invalid form field's error outline silently hid the browser's own focus ring.
+- **Accessibility (WCAG 2.1 AA):** audited for labelling, colour contrast and keyboard navigation. Full write-up and the contrast table are in [the accessibility audit](docs/accessibility-audit.md); in short, colour contrast already passed everywhere (lowest is 4.54:1 against a 4.5:1 requirement), one real labelling gap was found and fixed (per-date action buttons now include the date in their accessible name for screen readers), and a keyboard-focus bug was fixed where an invalid form field's error outline silently hid the browser's own focus ring.
+
+  | Sign-up form — keyboard focus visible | Homepage — colour palette | Rota detail — before the label fix |
+  |---|---|---|
+  | ![Sign-up form with the Username field showing a visible keyboard-focus outline](docs/screenshots/accessibility-signup-focus.jpg) | ![Homepage showing the rota list and headings in the site's colour palette](docs/screenshots/accessibility-homepage.jpg) | ![Rota detail page showing four date cards, each with identical Edit and Delete buttons](docs/screenshots/accessibility-rota-detail.jpg) |
+  | Native browser focus ring, now guaranteed everywhere via CSS. | Every colour pairing here passes 4.5:1 contrast. | The "Edit"/"Delete" buttons that read identically to a screen reader before `aria-label` was added. |
 
 ## Deployment
 
