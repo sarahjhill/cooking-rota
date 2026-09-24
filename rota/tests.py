@@ -92,13 +92,15 @@ class RotaCRUDTests(TestCase):
 
     def test_organiser_can_create_a_rota(self):
         self.client.login(username="org1", password="Sturdy-Passphrase-42")
+        start = date.today() + timedelta(days=30)
+        end = start + timedelta(days=13)
         response = self.client.post(reverse("rota:rota_create"), {
             "recipient_name": "Priya",
             "occasion": "",
             "dietary_notes": "",
             "address": "",
-            "start_date": "2026-02-01",
-            "end_date": "2026-02-14",
+            "start_date": start.isoformat(),
+            "end_date": end.isoformat(),
         })
         self.assertEqual(Rota.objects.filter(recipient_name="Priya").count(), 1)
         new_rota = Rota.objects.get(recipient_name="Priya")
