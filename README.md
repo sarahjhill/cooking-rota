@@ -1,7 +1,7 @@
 # Community Cooking Rota
 
 **Live app:** https://community-cooking-rota-a0e405aa09f1.herokuapp.com/
-**Repository:** https://github.com/sarahjhill/community-cooking-rota
+**Repository:** https://github.com/sarahjhill/cooking-rota
 
 ## Introduction
 
@@ -36,7 +36,7 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 
 See `docs/erd.md` for the full breakdown.
 
-**Auto-generated architecture diagram:** [view on GitDiagram](https://gitdiagram.com/sarahjhill/community-cooking-rota) — an interactive map of how requests flow through the app (URLs → views → access control → models), generated straight from this repo's code.
+**Auto-generated architecture diagram:** [view on GitDiagram](https://gitdiagram.com/sarahjhill/cooking-rota) — an interactive map of how requests flow through the app (URLs → views → access control → models), generated straight from this repo's code.
 
 ## Screenshots
 
@@ -68,8 +68,8 @@ See `docs/erd.md` for the full breakdown.
 ## Local setup
 
 ```bash
-git clone https://github.com/sarahjhill/community-cooking-rota.git
-cd community-cooking-rota
+git clone https://github.com/sarahjhill/cooking-rota.git
+cd cooking-rota
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -84,12 +84,12 @@ python manage.py runserver
   python manage.py test
   ```
 - **Manual testing:** every user-facing flow (register as each role, create/edit/delete a rota, add/edit/delete a slot, claim, cancel) was walked through by hand on both desktop and mobile.
-- **SME review:** a live walkthrough of the app with a Subject Matter Expert, run against the [SME code review demo guide](docs/sme-code-review-demo.html). Feedback was logged as real GitHub issues (labelled [`sme-feedback`](https://github.com/sarahjhill/community-cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback)) rather than just discussed and forgotten. Full write-up below — click the image to read the whole document:
+- **SME review:** a live walkthrough of the app with a Subject Matter Expert, run against the [SME code review demo guide](docs/sme-code-review-demo.html). Feedback was logged as real GitHub issues (labelled [`sme-feedback`](https://github.com/sarahjhill/cooking-rota/issues?q=is%3Aissue+label%3Asme-feedback)) rather than just discussed and forgotten. Full write-up below — click the image to read the whole document:
 
   [![SME code review findings — click to read the full write-up](docs/screenshots/sme-review-findings.png)](docs/sme-review-findings.html)
 
-  - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/community-cooking-rota/issues/11) (Medium)
-  - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/community-cooking-rota/issues/12) (Low)
+  - [Issue #11 — No way to contact the cook or organiser from a rota page](https://github.com/sarahjhill/cooking-rota/issues/11) (Medium)
+  - [Issue #12 — Claimed slots show a date but no time](https://github.com/sarahjhill/cooking-rota/issues/12) (Low)
 - **Validators:** HTML, CSS and Python (PEP8) validator results to be added here.
 
 ## Deployment
