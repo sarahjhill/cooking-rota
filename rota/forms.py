@@ -47,6 +47,19 @@ class RotaForm(forms.ModelForm):
             "dietary_notes": forms.Textarea(attrs={"rows": 3}),
         }
 
+    def clean_start_date(self):
+        """No point creating a brand new rota that starts in the past.
+
+        Only checked when creating a rota — an organiser editing an
+        already-running rota shouldn't be blocked by its original start date.
+        """
+        start_date = self.cleaned_data.get("start_date")
+
+        if start_date and not self.instance.pk and start_date < timezone.localdate():
+            raise ValidationError("The start date can't be in the past.")
+
+        return start_date
+
     def clean(self):
         """A rota that ends before it starts isn't something the model can catch on its own."""
         cleaned_data = super().clean()

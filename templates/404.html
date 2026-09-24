@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found — Community Cooking Rota{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1>We can't find that page</h1>
+  <p>
+    The page you were looking for doesn't exist — it may have been moved, or the
+    link might not be quite right.
+  </p>
+  <p><a class="btn" href="{% url 'rota:home' %}">Back to Rotas</a></p>
+</div>
+{% endblock %}

@@ -30,6 +30,10 @@
                     <span class="calendar-day__status">Open &mdash; nobody signed up yet</span>
                 {% endif %}
 
+                {% if slot.notes %}
+                    <p class="calendar-day__notes"><strong>Notes:</strong> {{ slot.notes }}</p>
+                {% endif %}
+
                 {% if user == rota.organiser %}
                     <div class="calendar-day__actions">
                         <a class="btn btn-small" href="{% url 'rota:slot_update' slot.pk %}">Edit</a>

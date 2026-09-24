@@ -1,3 +1,4 @@
+/* jshint esversion: 11 */
 // Rotates the caption under the homepage cooking animation.
 // Does nothing on pages that don't have the element — safe to load everywhere.
 document.addEventListener("DOMContentLoaded", () => {

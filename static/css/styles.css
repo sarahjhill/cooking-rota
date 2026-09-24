@@ -246,6 +246,13 @@ body {
     font-weight: 600;
 }
 
+.calendar-day__notes {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin: 0.4rem 0 0;
+    line-height: 1.4;
+}
+
 .calendar-day .btn-small {
     display: inline-block;
     margin-top: 0.5rem;
@@ -319,6 +326,17 @@ body {
 
 .form-card ul.errorlist li {
     margin: 0;
+}
+
+/* The invalid input sits in the very next <p> after its errorlist — give
+   it a visible red outline too, so the problem field is obvious at a
+   glance and not just from the text above it. */
+.form-card ul.errorlist + p input,
+.form-card ul.errorlist + p select,
+.form-card ul.errorlist + p textarea {
+    border-color: #B02F2F;
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 1px #B02F2F;
 }
 
 .form-error {
