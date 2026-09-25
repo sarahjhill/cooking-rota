@@ -353,3 +353,85 @@ class FormValidationTests(TestCase):
         }, follow=True)
         self.assertContains(response, "created.")
         self.assertTrue(Rota.objects.filter(recipient_name="Valid Rota").exists())
+
+class PeerReviewFeedbackTests(TestCase):
+    """Covers the two issues logged from the SME code review (#11, #12)."""
+
+    def setUp(self):
+        self.organiser = User.objects.create_user(
+            username="organiser5",
+            password="Sturdy-Passphrase-42",
+            email="organiser5@example.com",
+        )
+        Profile.objects.create(user=self.organiser, role="organiser", phone="01234 567890")
+
+        self.cook = User.objects.create_user(
+            username="cook5",
+            password="Sturdy-Passphrase-42",
+            email="cook5@example.com",
+        )
+        Profile.objects.create(user=self.cook, role="cook", phone="07000 111222")
+
+        self.other_cook = User.objects.create_user(username="cook6", password="Sturdy-Passphrase-42")
+        Profile.objects.create(user=self.other_cook, role="cook")
+
+        self.rota = Rota.objects.create(
+            organiser=self.organiser,
+            recipient_name="Jo",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 14),
+        )
+        self.slot = Slot.objects.create(rota=self.rota, date=date(2026, 1, 3))
+
+    def test_organiser_can_set_a_preferred_time_on_a_slot(self):
+        """Issue #12 — claimed slots showed a date but no time."""
+        self.client.login(username="organiser5", password="Sturdy-Passphrase-42")
+        new_slot_date = date.today() + timedelta(days=5)
+        self.client.post(reverse("rota:slot_create", args=[self.rota.pk]), {
+            "date": new_slot_date.isoformat(),
+            "preferred_time": "around 6pm",
+            "notes": "",
+        })
+
+        new_slot = self.rota.slots.get(date=new_slot_date)
+        self.assertEqual(new_slot.preferred_time, "around 6pm")
+
+        response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
+        self.assertContains(response, "around 6pm")
+
+    def test_cook_sees_organisers_contact_once_they_claim_a_slot(self):
+        """Issue #11 — no way to contact the cook or organiser from a rota page."""
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="cook5", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
+
+        self.assertContains(response, "organiser5@example.com")
+        self.assertContains(response, "01234 567890")
+
+    def test_organiser_sees_cooks_contact_once_a_slot_is_claimed(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="organiser5", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
+
+        self.assertContains(response, "cook5@example.com")
+        self.assertContains(response, "07000 111222")
+
+    def test_contact_details_not_shown_for_an_unclaimed_slot(self):
+        self.client.login(username="organiser5", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
+        self.assertNotContains(response, "07000 111222")
+
+    def test_contact_details_not_shown_to_an_unrelated_cook(self):
+        self.slot.cook = self.cook
+        self.slot.save()
+
+        self.client.login(username="cook6", password="Sturdy-Passphrase-42")
+        response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
+
+        self.assertNotContains(response, "organiser5@example.com")
+        self.assertNotContains(response, "cook5@example.com")
+

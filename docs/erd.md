@@ -11,6 +11,7 @@
 - id
 - user (OneToOneField → User)
 - role (choices: "organiser" / "cook")
+- phone (optional — shown to the other side of a claim once a date is claimed, never shown publicly)
 - created_at
 
 ### Rota (organiser owns; 1—N from User as organiser)
@@ -29,6 +30,7 @@
 - id
 - rota (ForeignKey → Rota)
 - date
+- preferred_time (optional free text, e.g. "around 6pm")
 - cook (ForeignKey → User, null=True, blank=True — unclaimed until a cook claims it)
 - notes
 - claimed_at

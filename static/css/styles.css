@@ -256,6 +256,16 @@ body {
     line-height: 1.4;
 }
 
+.calendar-day__contact {
+    font-size: 0.85rem;
+    color: var(--text);
+    background: #f8f5f1;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    margin: 0.4rem 0 0;
+    line-height: 1.4;
+}
+
 .calendar-day .btn-small {
     display: inline-block;
     margin-top: 0.5rem;

@@ -19,13 +19,19 @@ class SignUpForm(UserCreationForm):
         widget=forms.RadioSelect,
         label="I am signing up as",
     )
+    phone = forms.CharField(
+        required=False,
+        max_length=30,
+        label="Phone (optional)",
+        help_text="Only shown to the other side of a claim once a date is claimed — never shown publicly.",
+    )
 
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
 
     # Show the fields in a sensible order rather than Django's default.
-    field_order = ["username", "email", "role", "password1", "password2"]
+    field_order = ["username", "email", "role", "phone", "password1", "password2"]
 
 
 class RotaForm(forms.ModelForm):
@@ -79,9 +85,10 @@ class SlotForm(forms.ModelForm):
 
     class Meta:
         model = Slot
-        fields = ["date", "notes"]
+        fields = ["date", "preferred_time", "notes"]
         widgets = {
             "date": forms.DateInput(attrs={"type": "date"}),
+            "preferred_time": forms.TextInput(attrs={"placeholder": "e.g. around 6pm"}),
             "notes": forms.Textarea(attrs={"rows": 2}),
         }
 

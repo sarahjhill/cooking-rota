@@ -22,7 +22,9 @@
     <ul class="calendar-grid">
         {% for slot in rota.slots.all %}
             <li class="calendar-day {% if slot.cook %}calendar-day--claimed{% else %}calendar-day--open{% endif %}">
-                <span class="calendar-day__date">{{ slot.date }}</span>
+                <span class="calendar-day__date">
+                    {{ slot.date }}{% if slot.preferred_time %} &middot; {{ slot.preferred_time }}{% endif %}
+                </span>
 
                 {% if slot.cook %}
                     <span class="calendar-day__status calendar-day__status--claimed">{{ slot.cook.username }}</span>
@@ -32,6 +34,18 @@
 
                 {% if slot.notes %}
                     <p class="calendar-day__notes"><strong>Notes:</strong> {{ slot.notes }}</p>
+                {% endif %}
+
+                {% if slot.cook and user == rota.organiser %}
+                    <p class="calendar-day__contact">
+                        <strong>Contact {{ slot.cook.username }}:</strong>
+                        {{ slot.cook.email }}{% if slot.cook.profile.phone %} &middot; {{ slot.cook.profile.phone }}{% endif %}
+                    </p>
+                {% elif slot.cook == user %}
+                    <p class="calendar-day__contact">
+                        <strong>Contact {{ rota.organiser.username }}:</strong>
+                        {{ rota.organiser.email }}{% if rota.organiser.profile.phone %} &middot; {{ rota.organiser.profile.phone }}{% endif %}
+                    </p>
                 {% endif %}
 
                 {% if user == rota.organiser %}

@@ -24,7 +24,7 @@ Two things stood out as genuine gaps for how this app would actually get used â€
 
 **Possible fix** Show the organiser's email or phone to the cook once they've claimed a slot, without exposing it publicly to everyone browsing the rota.
 
-**Logged as** [Issue #11](https://github.com/sarahjhill/cooking-rota/issues/11)
+**Logged as** [Issue #15](https://github.com/sarahjhill/cooking-rota/issues/15)
 
 ### Claimed slots show a date but no time â€” Low priority
 
@@ -34,7 +34,7 @@ Two things stood out as genuine gaps for how this app would actually get used â€
 
 **Possible fix** The `Slot` model currently only has a date field. Adding an optional time (or even just a free-text "preferred time" note) would cover this without forcing precision nobody has yet.
 
-**Logged as** [Issue #12](https://github.com/sarahjhill/cooking-rota/issues/12)
+**Logged as** [Issue #16](https://github.com/sarahjhill/cooking-rota/issues/16)
 
 ## 03 Â· Next steps
 

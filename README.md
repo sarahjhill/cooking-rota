@@ -132,6 +132,8 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 | Claim a slot (Cook) | A signed-in Cook can claim any open date on a rota via a simple form — no admin panel needed. |
 | Cancel a claimed slot | The cook who claimed a date (or the rota's organiser) can un-claim it, freeing it up again. |
 | Slot notes visible on the rota page | Any notes left on a slot (e.g. delivery instructions) show directly on the rota's date grid. |
+| Preferred time on a slot | An optional free-text time (e.g. "around 6pm") shown next to the date, so a claimed slot isn't just a bare date. |
+| Contact details once claimed | The organiser and the cook who claimed a date can see each other's email (and phone, if given) on the rota page — hidden from everyone else and on unclaimed dates. |
 | Calendar-style date grid | The rota detail page shows every date as a card in a responsive grid, rather than a plain list, with its status and available action. |
 | Ownership/permission checks | Every mutating view (create/edit/delete/claim/cancel) checks the signed-in user's ownership or role before allowing the action; anonymous and wrong-user access is redirected or denied. |
 | On-page notifications | Django `messages` banners confirm every create/update/delete/claim/cancel action, plus welcome/logout messages. |
@@ -167,6 +169,7 @@ erDiagram
     PROFILE {
         int id
         string role
+        string phone
         datetime created_at
     }
     ROTA {
@@ -183,6 +186,7 @@ erDiagram
     SLOT {
         int id
         date date
+        string preferred_time
         text notes
         datetime claimed_at
         datetime created_at
@@ -248,7 +252,7 @@ python manage.py runserver
 
 ### Automated tests
 
-30 tests across 7 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, and form validation (rejecting an end date before the start date, a new rota starting in the past, and a slot date already in the past). Run them with:
+35 tests across 8 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, form validation (rejecting an end date before the start date, a new rota starting in the past, and a slot date already in the past), and the peer-review fixes (contact details shown only to the right people, a preferred time saving and displaying). Run them with:
 
 ```bash
 python manage.py test
@@ -256,8 +260,8 @@ python manage.py test
 
 | Result |
 |---|
-| ![All 30 automated tests passing](docs/screenshots/automated-tests-passing.png) |
-| A real terminal run, all 30 passing. |
+| ![All 35 automated tests passing](docs/screenshots/automated-tests-passing.png) |
+| A real terminal run, all 35 passing. |
 
 ### Manual testing
 
@@ -272,8 +276,23 @@ A live walkthrough of the app with a Subject Matter Expert, run against the <a h
 | <a href="docs/sme-review-findings.md" target="_blank" rel="noopener"><img src="docs/screenshots/sme-review-findings.png" alt="SME code review findings — click to read the full write-up"></a> |
 | Click the image for the full write-up. |
 
-- <a href="https://github.com/sarahjhill/cooking-rota/issues/11" target="_blank" rel="noopener">Issue #11 — No way to contact the cook or organiser from a rota page</a> (Medium)
-- <a href="https://github.com/sarahjhill/cooking-rota/issues/12" target="_blank" rel="noopener">Issue #12 — Claimed slots show a date but no time</a> (Low)
+- <a href="https://github.com/sarahjhill/cooking-rota/issues/15" target="_blank" rel="noopener">Issue #15 — No way to contact the cook or organiser from a rota page</a> (Medium) &mdash; fixed, see below
+- <a href="https://github.com/sarahjhill/cooking-rota/issues/16" target="_blank" rel="noopener">Issue #16 — Claimed slots show a date but no time</a> (Low) &mdash; fixed, see below
+
+### Acting on the SME feedback
+
+Both issues from the SME review are now fixed.
+
+**Issue #11 &mdash; contact details.** Sign-up now has an optional phone number field, alongside the email address Django already collects. Once a date is claimed, the organiser and the cook who claimed it can see each other's email (and phone, if given) on the rota page &mdash; nobody else can, and it stays hidden on every unclaimed date.
+
+**Issue #12 &mdash; a preferred time.** Adding or editing a date now has an optional free-text "preferred time" field (e.g. "around 6pm"), shown next to the date on the rota page. Free text rather than a fixed time picker, since nobody has an exact drop-off time this early.
+
+| Cook's view once they've claimed a date | Organiser's view of the same date |
+|---|---|
+| ![Rota detail page as the cook who claimed the date, showing the date with a preferred time and the organiser's contact details](docs/screenshots/peer-review-cook-view.jpg) | ![Rota detail page as the organiser, showing the same date with the cook's contact details](docs/screenshots/peer-review-organiser-view.jpg) |
+| "Oct. 3, 2026 &middot; around 6pm", plus a contact box for the organiser. | The same date, with a contact box for the cook who claimed it. |
+
+Covered by 5 new automated tests in `PeerReviewFeedbackTests` (`rota/tests.py`) &mdash; contact details show to the organiser and the claiming cook, stay hidden on an unclaimed date and from an unrelated cook, and a preferred time saves and displays correctly.
 
 ### Validators
 

@@ -20,7 +20,11 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Profile.objects.create(user=user, role=form.cleaned_data["role"])
+            Profile.objects.create(
+                user=user,
+                role=form.cleaned_data["role"],
+                phone=form.cleaned_data.get("phone", ""),
+            )
             login(request, user)
             messages.success(
                 request,

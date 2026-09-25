@@ -16,6 +16,11 @@ class Profile(models.Model):
         related_name="profile",
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    phone = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text="Optional — shown to the other side of a claim once a date is claimed.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -59,6 +64,11 @@ class Slot(models.Model):
         related_name="claimed_slots",
     )
     notes = models.TextField(blank=True)
+    preferred_time = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text='Optional — e.g. "around 6pm" or "after school pickup".',
+    )
     claimed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
