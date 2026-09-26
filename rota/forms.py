@@ -23,7 +23,10 @@ class SignUpForm(UserCreationForm):
         required=False,
         max_length=30,
         label="Phone (optional)",
-        help_text="Only shown to the other side of a claim once a date is claimed — never shown publicly.",
+        help_text=(
+            "Only shown to the other side of a claim once a date is claimed "
+            "— never shown publicly."
+        ),
     )
 
     class Meta:

@@ -36,6 +36,7 @@ def signup(request):
 
     return render(request, "registration/signup.html", {"form": form})
 
+
 def _require_organiser(request):
     """Stop the request here unless the signed-in user is an Organiser."""
     if not hasattr(request.user, "profile") or request.user.profile.role != "organiser":
@@ -97,6 +98,7 @@ def rota_delete(request, pk):
 
     return render(request, "rota/rota_confirm_delete.html", {"rota": rota})
 
+
 def _require_cook(request):
     """Stop the request here unless the signed-in user is a Cook."""
     if not hasattr(request.user, "profile") or request.user.profile.role != "cook":
@@ -120,7 +122,11 @@ def slot_create(request, rota_pk):
     else:
         form = SlotForm()
 
-    return render(request, "rota/slot_form.html", {"form": form, "heading": "Add a date", "rota": rota})
+    return render(
+        request,
+        "rota/slot_form.html",
+        {"form": form, "heading": "Add a date", "rota": rota},
+    )
 
 
 @login_required
@@ -138,7 +144,11 @@ def slot_update(request, pk):
     else:
         form = SlotForm(instance=slot)
 
-    return render(request, "rota/slot_form.html", {"form": form, "heading": "Edit date", "rota": slot.rota})
+    return render(
+        request,
+        "rota/slot_form.html",
+        {"form": form, "heading": "Edit date", "rota": slot.rota},
+    )
 
 
 @login_required

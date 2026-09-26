@@ -72,7 +72,9 @@ class RotaCRUDTests(TestCase):
         self.organiser = User.objects.create_user(username="org1", password="Sturdy-Passphrase-42")
         Profile.objects.create(user=self.organiser, role="organiser")
 
-        self.other_organiser = User.objects.create_user(username="org2", password="Sturdy-Passphrase-42")
+        self.other_organiser = User.objects.create_user(
+            username="org2", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.other_organiser, role="organiser")
 
         self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
@@ -123,6 +125,7 @@ class RotaCRUDTests(TestCase):
         response = self.client.get(reverse("rota:rota_detail", args=[self.rota.pk]))
         self.assertEqual(response.status_code, 200)
 
+
 class SlotCRUDTests(TestCase):
 
     def setUp(self):
@@ -132,7 +135,9 @@ class SlotCRUDTests(TestCase):
         self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
         Profile.objects.create(user=self.cook, role="cook")
 
-        self.other_cook = User.objects.create_user(username="cook2", password="Sturdy-Passphrase-42")
+        self.other_cook = User.objects.create_user(
+            username="cook2", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.other_cook, role="cook")
 
         self.rota = Rota.objects.create(
@@ -198,12 +203,15 @@ class SlotCRUDTests(TestCase):
         self.slot.refresh_from_db()
         self.assertEqual(self.slot.cook, self.cook)
 
+
 class OwnershipPermissionTests(TestCase):
     def setUp(self):
         self.organiser = User.objects.create_user(username="org1", password="Sturdy-Passphrase-42")
         Profile.objects.create(user=self.organiser, role="organiser")
 
-        self.other_organiser = User.objects.create_user(username="org2", password="Sturdy-Passphrase-42")
+        self.other_organiser = User.objects.create_user(
+            username="org2", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.other_organiser, role="organiser")
 
         self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
@@ -254,7 +262,9 @@ class NotificationTests(TestCase):
     """Every create/update/delete/claim/cancel action shows an on-page message."""
 
     def setUp(self):
-        self.organiser = User.objects.create_user(username="organiser1", password="Sturdy-Passphrase-42")
+        self.organiser = User.objects.create_user(
+            username="organiser1", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.organiser, role="organiser")
         self.cook = User.objects.create_user(username="cook1", password="Sturdy-Passphrase-42")
         Profile.objects.create(user=self.cook, role="cook")
@@ -309,7 +319,9 @@ class FormValidationTests(TestCase):
     """Forms reject bad input with a clear message, not a 500 or a silent save."""
 
     def setUp(self):
-        self.organiser = User.objects.create_user(username="organiser3", password="Sturdy-Passphrase-42")
+        self.organiser = User.objects.create_user(
+            username="organiser3", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.organiser, role="organiser")
         self.rota = Rota.objects.create(
             organiser=self.organiser,
@@ -354,6 +366,7 @@ class FormValidationTests(TestCase):
         self.assertContains(response, "created.")
         self.assertTrue(Rota.objects.filter(recipient_name="Valid Rota").exists())
 
+
 class PeerReviewFeedbackTests(TestCase):
     """Covers the two issues logged from the SME code review (#11, #12)."""
 
@@ -372,7 +385,9 @@ class PeerReviewFeedbackTests(TestCase):
         )
         Profile.objects.create(user=self.cook, role="cook", phone="07000 111222")
 
-        self.other_cook = User.objects.create_user(username="cook6", password="Sturdy-Passphrase-42")
+        self.other_cook = User.objects.create_user(
+            username="cook6", password="Sturdy-Passphrase-42"
+        )
         Profile.objects.create(user=self.other_cook, role="cook")
 
         self.rota = Rota.objects.create(
@@ -434,4 +449,3 @@ class PeerReviewFeedbackTests(TestCase):
 
         self.assertNotContains(response, "organiser5@example.com")
         self.assertNotContains(response, "cook5@example.com")
-

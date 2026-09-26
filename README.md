@@ -296,7 +296,14 @@ Covered by 5 new automated tests in `PeerReviewFeedbackTests` (`rota/tests.py`) 
 
 ### Validators
 
-HTML, CSS and Python (PEP8) validator results to be added here.
+Run against the live deployed site (home page and its stylesheet) and the Python source.
+
+| Validator | Scope | Result | Screenshot |
+|---|---|---|---|
+| <a href="https://validator.w3.org/nu/" target="_blank" rel="noopener">W3C Nu HTML Checker</a> | Home page (`/`) | Pass &mdash; no errors or warnings (five harmless "trailing slash on void elements" info notices only) | ![W3C HTML validator results for the home page, showing no errors or warnings](docs/screenshots/html-validator-home.jpg) |
+| <a href="https://jigsaw.w3.org/css-validator/" target="_blank" rel="noopener">W3C CSS Validator</a> | `static/css/styles.css` | Pass &mdash; "Congratulations! No Error Found" (two informational notes on CSS custom properties, not errors) | ![W3C CSS validator results, showing Congratulations! No Error Found](docs/screenshots/css-validator.jpg) |
+| <a href="https://flake8.pycqa.org/" target="_blank" rel="noopener">flake8</a> (PEP8) | `rota/`, `config/`, `manage.py` | Pass &mdash; zero violations | ![Terminal showing flake8 run against the project with zero PEP8 violations](docs/screenshots/pep8-flake8-passing.png) |
+| <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener">Lighthouse</a> (via PageSpeed Insights, mobile) | Home page (`/`) | 100 / 100 / 100 / 100 &mdash; Performance, Accessibility, Best Practices, SEO | ![Lighthouse report for the home page showing 100 across Performance, Accessibility, Best Practices and SEO](docs/screenshots/lighthouse-home-mobile.jpg) |
 
 ### Accessibility (WCAG 2.1 AA)
 
