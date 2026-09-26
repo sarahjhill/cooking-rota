@@ -38,6 +38,16 @@ class SignUpForm(UserCreationForm):
         "username", "email", "role", "phone", "password1", "password2",
     ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Django's default password1 help text is an HTML <ul>, which is
+        # invalid nested inside the <p> that .as_p() wraps each field in.
+        # Plain text keeps the page valid and reads just as clearly.
+        self.fields["password1"].help_text = (
+            "At least 8 characters. Can't be entirely numeric, too "
+            "similar to your other details, or a commonly used password."
+        )
+
 
 class RotaForm(forms.ModelForm):
     """The fields an Organiser fills in to create or edit a rota."""

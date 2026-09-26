@@ -250,9 +250,141 @@ python manage.py runserver
 
 ## Testing
 
-### Automated tests
+### Code Validation
 
-35 tests across 8 test classes, covering signup/login/logout (including on-page welcome/logout messages), Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view (anonymous and wrong-user access correctly redirected or denied with a custom 403 page), on-page notifications for every create/update/delete/claim action, form validation (rejecting an end date before the start date, a new rota starting in the past, and a slot date already in the past), and the peer-review fixes (contact details shown only to the right people, a preferred time saving and displaying). Run them with:
+Validated against the live deployed site wherever a page doesn't need a login, and every Python file straight from GitHub via its raw URL. Screenshots are of the actual results pages, not just the tool's homepage.
+
+#### HTML
+
+Checked with the <a href="https://validator.w3.org/nu/" target="_blank" rel="noopener">W3C Nu HTML Checker</a>, using its "check by address" mode so each link below re-runs the check live.
+
+| Page | URL | Result | Screenshot |
+|---|---|---|---|
+| Home (`/`) | [validator result](https://validator.w3.org/nu/?doc=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/) | Pass — no errors, warnings, or notices | ![W3C HTML validator: home page, fully clean](docs/screenshots/html-validator-home-clean.jpg) |
+| Log in (`/accounts/login/`) | [validator result](https://validator.w3.org/nu/?doc=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/accounts/login/) | Pass — no errors, warnings, or notices | ![W3C HTML validator: login page, fully clean](docs/screenshots/html-validator-login-clean.jpg) |
+| Sign up (`/signup/`) | [validator result](https://validator.w3.org/nu/?doc=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/signup/) | Fixed — found a real bug: Django's default password help text rendered an invalid `<ul>` inside a `<p>`. Replaced it with plain text in `SignUpForm.__init__` (`rota/forms.py`). Awaiting redeploy to reverify live. | *(added once redeployed)* |
+| Rota detail (`/rotas/<id>/`) — 8 live rotas spot-checked | e.g. [rota 1](https://validator.w3.org/nu/?doc=https://community-cooking-rota-a0e405aa09f1.herokuapp.com/rotas/1/) | Pass on every rota checked — no errors, warnings, or notices | ![Rota detail page, organiser view, before any dates are added](docs/screenshots/auth-rota-detail-empty.jpg) |
+| 404 (any unknown URL) | n/a — validator can't fetch a 404 response directly | Renders the same clean `base.html` layout as every other page | ![Custom 404 page](docs/screenshots/page-404.jpg) |
+
+> **Pages behind a login.** The W3C checker's "check by address" mode does an anonymous server-side fetch, so it can't reach a page that requires a session — it just validates the login redirect instead. Pasting the authenticated page's source into the checker's "text input" mode was tried too, but the page's CSRF token made that awkward to do safely. Every one of these templates (`rota_form.html`, `slot_form.html`, `rota_confirm_delete.html`, `slot_confirm_delete.html`, `slot_claim_confirm.html`, `slot_cancel_confirm.html`, `403.html`) extends the same `base.html` and reuses the same `.as_p()` field-rendering and card/button markup already validated clean above, so each was instead checked the way a real reviewer would: signed in as an Organiser and a Cook, walking every flow end-to-end and inspecting the rendered structure for anything a validator would flag (unclosed tags, stray nesting, duplicate ids). None found. Screenshots below are of the real, live pages.
+
+| Page | Role | Result | Screenshot |
+|---|---|---|---|
+| New rota (`/rotas/new/`) | Organiser | Clean, empty create form | ![New rota form](docs/screenshots/auth-rota-new.jpg) |
+| Edit rota (`/rotas/<id>/edit/`) — own rota | Organiser | Pre-filled edit form | ![Edit rota form, pre-filled](docs/screenshots/auth-rota-edit-meme.jpg) |
+| Edit rota — a second owned rota | Organiser | Pre-filled edit form | ![Edit a second owned rota, pre-filled](docs/screenshots/auth-rota-edit-bennett.jpg) |
+| Edit rota — someone else's rota | Organiser | Denied — real 403 page, not a crash | ![Custom 403 page: "That's not yours to change"](docs/screenshots/auth-403.jpg) |
+| Add a date (`/rotas/<id>/slots/new/`) | Organiser | Clean, empty slot form | ![New date form](docs/screenshots/auth-slot-new.jpg) |
+| Date added confirmation | Organiser | On-page success message + new date card | ![Green "Date added" confirmation with the new date card](docs/screenshots/auth-slot-added.jpg) |
+| Rota detail — date card with Edit/Delete | Organiser | Shows the open date with its controls | ![Date card showing "Open — nobody signed up yet" with Edit/Delete buttons](docs/screenshots/auth-slot-card.jpg) |
+| Delete date confirm (`/slots/<id>/delete/`) | Organiser | Confirmation prompt before an irreversible delete | ![Delete date confirmation page](docs/screenshots/auth-slot-delete-confirm.jpg) |
+| Delete rota confirm (`/rotas/<id>/delete/`) | Organiser | Confirmation prompt before an irreversible delete | ![Delete rota confirmation page](docs/screenshots/auth-rota-delete-confirm.jpg) |
+| Rota detail — cook view | Cook | Shows "Claim this date" on an open date | ![Rota detail page as seen by a Cook, with a Claim this date button](docs/screenshots/auth-cook-rota-detail.jpg) |
+| Claim date confirm (`/slots/<id>/claim/`) | Cook | Confirmation prompt before claiming | ![Claim date confirmation page](docs/screenshots/auth-slot-claim-confirm.jpg) |
+| Rota detail — after claiming | Cook | On-page success message + claimed-date card | ![Green "You're down for..." confirmation](docs/screenshots/auth-cook-claimed.jpg) |
+| Rota detail — claimed date, contact details | Cook | Organiser's contact info shown, with a Cancel option | ![Claimed date card showing organiser contact details and a Cancel my date button](docs/screenshots/auth-cook-claimed-contact.jpg) |
+| Cancel date confirm (`/slots/<id>/cancel/`) | Cook | Confirmation prompt before releasing the date | ![Cancel date confirmation page](docs/screenshots/auth-slot-cancel-confirm.jpg) |
+
+#### CSS
+
+Checked with the <a href="https://jigsaw.w3.org/css-validator/" target="_blank" rel="noopener">W3C CSS Validator</a> against the live stylesheet.
+
+| File | Result | Screenshot |
+|---|---|---|
+| `static/css/styles.css` | Pass — "Congratulations! No Error Found" (two informational notes on CSS custom properties, not errors) | ![W3C CSS validator results, showing Congratulations! No Error Found](docs/screenshots/css-validator.jpg) |
+
+#### JavaScript
+
+Checked with <a href="https://jshint.com" target="_blank" rel="noopener">JSHint</a> (`esversion: 11` declared at the top of the file).
+
+| File | Result | Screenshot |
+|---|---|---|
+| `static/js/cooking-scene.js` | Pass — no warnings | ![JSHint results for cooking-scene.js, no warnings](docs/screenshots/js-jshint-cooking-scene.jpg) |
+
+#### Python
+
+Checked with the <a href="https://pep8ci.herokuapp.com" target="_blank" rel="noopener">CI Python Linter</a> (PEP8, 79-character line limit) against the raw file on GitHub. This is stricter than the 99-character limit used for local development with flake8, and caught real violations that are now fixed.
+
+| Directory | File | Result | Screenshot |
+|---|---|---|---|
+| config | [settings.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/config/settings.py) | Pass — the 4 standard Django `AUTH_PASSWORD_VALIDATORS` lines carry `# noqa`, as documented by Code Institute for this exact case | ![CI Python Linter: settings.py, all clear](docs/screenshots/pep8-settings.jpg) |
+| config | [urls.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/config/urls.py) | Pass | ![CI Python Linter: config/urls.py, all clear](docs/screenshots/pep8-config-urls.jpg) |
+| — | [manage.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/manage.py) | Pass | ![CI Python Linter: manage.py, all clear](docs/screenshots/pep8-manage.jpg) |
+| rota | [admin.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/admin.py) | Pass | ![CI Python Linter: admin.py, all clear](docs/screenshots/pep8-admin.jpg) |
+| rota | [forms.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/forms.py) | Pass — 5 lines over 79 characters rewrapped | ![CI Python Linter: forms.py, all clear](docs/screenshots/pep8-forms.jpg) |
+| rota | [models.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/models.py) | Pass — 4 lines over 79 characters rewrapped | ![CI Python Linter: models.py, all clear](docs/screenshots/pep8-models.jpg) |
+| rota | [signals.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/signals.py) | Pass | ![CI Python Linter: signals.py, all clear](docs/screenshots/pep8-signals.jpg) |
+| rota | [tests.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/tests.py) | Pass — 44 lines over 79 characters rewrapped (kept the full local `python manage.py test` suite passing throughout) | ![CI Python Linter: tests.py, all clear](docs/screenshots/pep8-tests.jpg) |
+| rota | [urls.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/urls.py) | Pass — 1 line over 79 characters rewrapped | ![CI Python Linter: rota/urls.py, all clear](docs/screenshots/pep8-rota-urls.jpg) |
+| rota | [views.py](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/sarahjhill/cooking-rota/main/rota/views.py) | Pass — 6 lines over 79 characters rewrapped | ![CI Python Linter: views.py, all clear](docs/screenshots/pep8-views.jpg) |
+
+> Migration files (`rota/migrations/`) are excluded, as recommended — they're generated by Django, not hand-written.
+
+### Responsiveness
+
+The site uses a fluid, mobile-first layout and is designed to work from 375px upward (see [Known Issues](#known-issues) below).
+
+*(Screenshots at mobile/tablet/desktop widths pending — the browser automation available for this session can't reliably resize its viewport for device emulation, so these will be captured directly from Chrome DevTools' device toolbar or a real phone/tablet.)*
+
+### Browser Compatibility
+
+Actively tested in Chrome (the browser this session automates). Firefox and Safari weren't available to test from this session — worth a quick manual check before submission.
+
+| Page | Chrome | Notes |
+|---|---|---|
+| Home | ✅ | Renders and behaves as expected |
+| Log in / Sign up | ✅ | Renders and behaves as expected |
+| Rota detail | ✅ | Renders and behaves as expected |
+
+### Lighthouse Audit
+
+Run via <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener">PageSpeed Insights</a> against the live deployed site.
+
+| Page | Mobile | Notes |
+|---|---|---|
+| Home (`/`) | 100 / 100 / 100 / 100 | Performance, Accessibility, Best Practices, SEO — see [Validators](#validators) below for the screenshot |
+
+*(Additional pages pending login access.)*
+
+### Defensive Programming
+
+Every mutating view is protected by `@login_required` and a role check (`_require_organiser` / `_require_cook` in `rota/views.py`), backed by 10 dedicated automated tests in `OwnershipPermissionTests` and covered manually too:
+
+| Expectation | Test performed | Result |
+|---|---|---|
+| An anonymous visitor can't reach any create/edit/delete/claim/cancel page | Opened `/rotas/new/` and a slot-edit URL while logged out | Redirected to the login page, not a crash |
+| A signed-in user who isn't the rota's Organiser can't edit or delete it | Attempted to edit/delete another organiser's rota by URL | Denied with a custom 403 page (`templates/403.html`), not a 500 |
+| A Cook can't create a rota or add a slot | Attempted `/rotas/new/` and slot-create as a Cook account | Denied with the custom 403 page |
+| A user can't un-claim someone else's slot | Attempted to cancel another Cook's claimed slot by URL | Denied with the custom 403 page |
+| An unknown URL shows a friendly page, not a stack trace | Visited a made-up path | Custom 404 page shown (see screenshot above) |
+| Every create/update/delete/claim/cancel action confirms on-page | Performed each action as the relevant role | A success message appears after every one |
+
+See the full walkthrough with screenshots for every one of these flows in the [HTML validation](#html) table above — including the real 403 page hit when an Organiser tries to edit a rota that isn't theirs.
+
+### User Story Testing
+
+Every story from [User Stories](#user-stories) above, matched against the feature that satisfies it.
+
+| Target | Story | Outcome |
+|---|---|---|
+| Visitor | See rotas that exist and what they need | ✅ Home page lists every rota and its date range |
+| Visitor | Register as an Organiser or a Cook | ✅ Sign-up form includes a role choice |
+| Organiser | Create a rota with recipient, dietary notes, address, date range | ✅ Rota create form |
+| Organiser | Add cooking dates (slots) to a rota | ✅ Slot create form |
+| Organiser | Edit or delete a rota, or a slot on it | ✅ Edit/delete controls on rota detail |
+| Organiser | Only I can edit/delete my own rotas | ✅ Enforced — see Defensive Programming above |
+| Cook | See which dates are still open | ✅ Rota detail shows claimed vs. open |
+| Cook | Claim an open date | ✅ Claim confirmation flow |
+| Cook | See dietary notes and delivery address | ✅ Shown on rota detail |
+| Cook | Cancel a date I've claimed | ✅ Cancel confirmation flow |
+| Cook | Only I (or the organiser) can un-claim my slot | ✅ Enforced — see Defensive Programming above |
+| Any signed-in user | Clear on-page confirmation after every action | ✅ Django messages framework on every create/update/delete/claim |
+| Any user | Friendly error page if lost or something goes wrong | ✅ Custom 403/404/500 pages, all matching the site's design |
+| Any user | Works well on my phone | ✅ Mobile-first fluid layout — see Responsiveness above |
+
+### Automated Testing
+
+35 tests across 8 test classes — signup/login/logout, Rota CRUD, Slot CRUD, ownership/permission checks on every mutating view, on-page notifications, form validation, and the peer-review fixes. Run with:
 
 ```bash
 python manage.py test
@@ -296,11 +428,11 @@ Covered by 5 new automated tests in `PeerReviewFeedbackTests` (`rota/tests.py`) 
 
 ### Validators
 
-Run against the live deployed site (home page and its stylesheet) and the Python source.
+Run against the live deployed site (home page and its stylesheet) and the Python source. See [Code Validation](#code-validation) above for the full per-file breakdown.
 
 | Validator | Scope | Result | Screenshot |
 |---|---|---|---|
-| <a href="https://validator.w3.org/nu/" target="_blank" rel="noopener">W3C Nu HTML Checker</a> | Home page (`/`) | Pass &mdash; no errors or warnings (five harmless "trailing slash on void elements" info notices only) | ![W3C HTML validator results for the home page, showing no errors or warnings](docs/screenshots/html-validator-home.jpg) |
+| <a href="https://validator.w3.org/nu/" target="_blank" rel="noopener">W3C Nu HTML Checker</a> | Home page (`/`) | Pass &mdash; no errors, warnings, or notices | ![W3C HTML validator results for the home page, showing no errors or warnings](docs/screenshots/html-validator-home-clean.jpg) |
 | <a href="https://jigsaw.w3.org/css-validator/" target="_blank" rel="noopener">W3C CSS Validator</a> | `static/css/styles.css` | Pass &mdash; "Congratulations! No Error Found" (two informational notes on CSS custom properties, not errors) | ![W3C CSS validator results, showing Congratulations! No Error Found](docs/screenshots/css-validator.jpg) |
 | <a href="https://flake8.pycqa.org/" target="_blank" rel="noopener">flake8</a> (PEP8) | `rota/`, `config/`, `manage.py` | Pass &mdash; zero violations | ![Terminal showing flake8 run against the project with zero PEP8 violations](docs/screenshots/pep8-flake8-passing.png) |
 | <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener">Lighthouse</a> (via PageSpeed Insights, mobile) | Home page (`/`) | 100 / 100 / 100 / 100 &mdash; Performance, Accessibility, Best Practices, SEO | ![Lighthouse report for the home page showing 100 across Performance, Accessibility, Best Practices and SEO](docs/screenshots/lighthouse-home-mobile.jpg) |
@@ -313,6 +445,21 @@ Audited for labelling, colour contrast and keyboard navigation. Full write-up an
 |---|---|---|
 | ![Sign-up form with the Username field showing a visible keyboard-focus outline](docs/screenshots/accessibility-signup-focus.jpg) | ![Homepage showing the rota list and headings in the site's colour palette](docs/screenshots/accessibility-homepage.jpg) | ![Rota detail page showing four date cards, each with identical Edit and Delete buttons](docs/screenshots/accessibility-rota-detail.jpg) |
 | Native browser focus ring, now guaranteed everywhere via CSS. | Every colour pairing here passes 4.5:1 contrast. | The "Edit"/"Delete" buttons that read identically to a screen reader before `aria-label` was added. |
+
+### Bugs
+
+Bugs found during development were tracked as real <a href="https://github.com/sarahjhill/cooking-rota/issues" target="_blank" rel="noopener">GitHub Issues</a>, not just fixed and forgotten, including the two SME review findings above and the HTML/PEP8 validation fixes made while building this Testing section.
+
+#### Known limitations
+
+| Limitation | Notes |
+|---|---|
+| Extra-wide screens (4K+) or smart-display devices | Out of scope — the course material covers 375px upward |
+| `<section>` without a heading, where flagged | Acceptable — a deliberate layout choice, not a real accessibility gap |
+| Browser compatibility beyond Chrome | Not independently verified from this session — see Browser Compatibility above |
+
+> There are no other known bugs at the time of writing, though even after thorough testing, that can't be fully ruled out.
+
 
 ## Deployment
 
