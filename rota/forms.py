@@ -34,7 +34,9 @@ class SignUpForm(UserCreationForm):
         fields = ["username", "email", "password1", "password2"]
 
     # Show the fields in a sensible order rather than Django's default.
-    field_order = ["username", "email", "role", "phone", "password1", "password2"]
+    field_order = [
+        "username", "email", "role", "phone", "password1", "password2",
+    ]
 
 
 class RotaForm(forms.ModelForm):
@@ -64,13 +66,14 @@ class RotaForm(forms.ModelForm):
         """
         start_date = self.cleaned_data.get("start_date")
 
-        if start_date and not self.instance.pk and start_date < timezone.localdate():
+        today = timezone.localdate()
+        if start_date and not self.instance.pk and start_date < today:
             raise ValidationError("The start date can't be in the past.")
 
         return start_date
 
     def clean(self):
-        """A rota that ends before it starts isn't something the model can catch on its own."""
+        """A rota ending before it starts isn't caught by the model alone."""
         cleaned_data = super().clean()
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
@@ -91,7 +94,9 @@ class SlotForm(forms.ModelForm):
         fields = ["date", "preferred_time", "notes"]
         widgets = {
             "date": forms.DateInput(attrs={"type": "date"}),
-            "preferred_time": forms.TextInput(attrs={"placeholder": "e.g. around 6pm"}),
+            "preferred_time": forms.TextInput(
+                attrs={"placeholder": "e.g. around 6pm"}
+            ),
             "notes": forms.Textarea(attrs={"rows": 2}),
         }
 
@@ -100,6 +105,8 @@ class SlotForm(forms.ModelForm):
         date = self.cleaned_data.get("date")
 
         if date and date < timezone.localdate():
-            raise ValidationError("This date has already passed — pick a date from today onwards.")
+            raise ValidationError(
+                "This date has already passed — pick one from today onwards."
+            )
 
         return date

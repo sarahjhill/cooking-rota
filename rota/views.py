@@ -39,7 +39,11 @@ def signup(request):
 
 def _require_organiser(request):
     """Stop the request here unless the signed-in user is an Organiser."""
-    if not hasattr(request.user, "profile") or request.user.profile.role != "organiser":
+    is_organiser = (
+        hasattr(request.user, "profile")
+        and request.user.profile.role == "organiser"
+    )
+    if not is_organiser:
         raise PermissionDenied("Only Organisers can do that.")
 
 
@@ -59,12 +63,15 @@ def rota_create(request):
             rota = form.save(commit=False)
             rota.organiser = request.user
             rota.save()
-            messages.success(request, f"Rota for {rota.recipient_name} created.")
+            messages.success(
+                request, f"Rota for {rota.recipient_name} created."
+            )
             return redirect("rota:rota_detail", pk=rota.pk)
     else:
         form = RotaForm()
 
-    return render(request, "rota/rota_form.html", {"form": form, "heading": "New rota"})
+    context = {"form": form, "heading": "New rota"}
+    return render(request, "rota/rota_form.html", context)
 
 
 @login_required
@@ -82,7 +89,8 @@ def rota_update(request, pk):
     else:
         form = RotaForm(instance=rota)
 
-    return render(request, "rota/rota_form.html", {"form": form, "heading": "Edit rota"})
+    context = {"form": form, "heading": "Edit rota"}
+    return render(request, "rota/rota_form.html", context)
 
 
 @login_required
@@ -101,7 +109,11 @@ def rota_delete(request, pk):
 
 def _require_cook(request):
     """Stop the request here unless the signed-in user is a Cook."""
-    if not hasattr(request.user, "profile") or request.user.profile.role != "cook":
+    is_cook = (
+        hasattr(request.user, "profile")
+        and request.user.profile.role == "cook"
+    )
+    if not is_cook:
         raise PermissionDenied("Only Cooks can do that.")
 
 
@@ -190,7 +202,9 @@ def slot_claim(request, pk):
 def slot_cancel(request, pk):
     slot = get_object_or_404(Slot, pk=pk)
     if slot.cook != request.user:
-        raise PermissionDenied("You can only cancel a date you claimed yourself.")
+        raise PermissionDenied(
+            "You can only cancel a date you claimed yourself."
+        )
 
     if request.method == "POST":
         slot.cook = None

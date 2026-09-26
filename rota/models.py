@@ -19,7 +19,10 @@ class Profile(models.Model):
     phone = models.CharField(
         max_length=30,
         blank=True,
-        help_text="Optional — shown to the other side of a claim once a date is claimed.",
+        help_text=(
+            "Optional — shown to the other side of a claim once a "
+            "date is claimed."
+        ),
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -48,13 +51,18 @@ class Rota(models.Model):
         ordering = ["-start_date"]
 
     def __str__(self):
-        return f"Rota for {self.recipient_name} ({self.start_date} to {self.end_date})"
+        return (
+            f"Rota for {self.recipient_name} "
+            f"({self.start_date} to {self.end_date})"
+        )
 
 
 class Slot(models.Model):
-    """A single cooking date within a Rota. Starts unclaimed; a Cook claims it."""
+    """A single cooking date within a Rota, unclaimed until a Cook claims."""
 
-    rota = models.ForeignKey(Rota, on_delete=models.CASCADE, related_name="slots")
+    rota = models.ForeignKey(
+        Rota, on_delete=models.CASCADE, related_name="slots"
+    )
     date = models.DateField()
     cook = models.ForeignKey(
         settings.AUTH_USER_MODEL,
