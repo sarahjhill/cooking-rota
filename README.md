@@ -117,6 +117,16 @@ A Django rebuild of the rota concept from the `cardiff-community-meals` project,
 - **Organiser** — creates a rota for a recipient, sets the date range, invites cooks, edits or deletes the rota and its slots.
 - **Cook** — registers/logs in, browses open slots on rotas they've been invited to (or that are public), claims a slot, can cancel their own claim, sees dietary notes and delivery details.
 
+## Agile Development Process
+
+<a href="https://github.com/users/sarahjhill/projects/17" target="_blank" rel="noopener">GitHub Projects</a> served as the Kanban board for this project, with Backlog / To do / In progress / Done columns. Every user story above was tracked as a GitHub issue on the board, moved across the columns as work progressed, and closed once shipped — all 16 are now in Done.
+
+![GitHub Projects Kanban board for this repo, showing Backlog/To do/In progress/Done columns](docs/screenshots/gh-projects-board.jpg)
+
+<a href="https://github.com/sarahjhill/cooking-rota/issues?q=is%3Aissue" target="_blank" rel="noopener">GitHub Issues</a> tracked the same items individually: each user story as an `enhancement`, and each bug found (including the two SME review findings below) as a `bug`. All 16 are closed.
+
+![GitHub Issues list for this repo, 16 closed issues labelled enhancement or bug](docs/screenshots/gh-issues-closed.jpg)
+
 ## Features
 
 ### Existing Features
@@ -236,6 +246,8 @@ See <a href="docs/erd.md" target="_blank" rel="noopener"><code>docs/erd.md</code
 - Django's built-in auth (`User` + a `Profile` model with a role field)
 - Heroku for deployment
 
+**Why Django's built-in auth, not `django-allauth`:** signup here only needs one thing beyond Django's default — the Organiser/Cook role choice — which is a few extra lines subclassing `UserCreationForm`. Allauth's real value is social login, email verification flows and multiple auth backends, none of which this app needs; injecting one custom field into its signup flow needs a custom adapter class and overridden templates, which is more code for the same result. Fewer dependencies also means less of the app is someone else's code, which matters for something being assessed on my own work.
+
 ## Local setup
 
 ```bash
@@ -322,9 +334,11 @@ Checked with the <a href="https://pep8ci.herokuapp.com" target="_blank" rel="noo
 
 ### Responsiveness
 
-The site uses a fluid, mobile-first layout and is designed to work from 375px upward (see [Known Issues](#known-issues) below).
+The site uses a fluid, mobile-first layout and is designed to work from 375px upward (see [Known Issues](#known-issues) below). Checked on a real phone as well as the [Am I Responsive?](#screenshots) device mockup above.
 
-*(Screenshots at mobile/tablet/desktop widths pending — the browser automation available for this session can't reliably resize its viewport for device emulation, so these will be captured directly from Chrome DevTools' device toolbar or a real phone/tablet.)*
+| Home (signed out) | Sign up | Rota detail | Home (signed in) |
+|---|---|---|---|
+| ![Home page on mobile](docs/screenshots/mobile-home.jpg) | ![Sign up form on mobile](docs/screenshots/mobile-signup.jpg) | ![Rota detail page on mobile](docs/screenshots/mobile-rota-detail.jpg) | ![Home page on mobile, signed in as an organiser](docs/screenshots/mobile-home-loggedin.jpg) |
 
 ### Browser Compatibility
 
