@@ -38,6 +38,23 @@ ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 # Without this, every form submission on the live site fails CSRF checks.
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
 
+# Production hardening — gated on Heroku's own DYNO variable (only set
+# when actually running on a dyno), not on DEBUG. Django's test runner
+# forces DEBUG=False for every test run regardless of settings, so
+# gating on DEBUG would turn on SECURE_SSL_REDIRECT during `manage.py
+# test` too and break every test with a 301 instead of a real response.
+# Heroku terminates SSL at its router and forwards plain HTTP
+# internally, so SECURE_PROXY_SSL_HEADER tells Django to trust the
+# X-Forwarded-Proto header instead of looping on the redirect.
+if os.environ.get('DYNO'):
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 
 # Application definition
 
