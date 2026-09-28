@@ -300,6 +300,14 @@ body {
     margin-top: 0.75rem;
 }
 
+/* form.as_p() wraps every other field in a <p>, which gets its usual
+   browser margin — the role radio group is rendered inside a <div>
+   instead (a <div> isn't valid inside a <p>), so it needs the same
+   margin added by hand to match the spacing of the fields around it. */
+.form-card .role-field {
+    margin: 1em 0;
+}
+
 .form-card input[type="text"],
 .form-card input[type="email"],
 .form-card input[type="password"] {

@@ -11,7 +11,26 @@
   <div class="card form-card">
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
+      {% for field in form %}
+        {{ field.errors }}
+        {% if field.name == "role" %}
+          <div class="role-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+              <span class="helptext">{{ field.help_text }}</span>
+            {% endif %}
+          </div>
+        {% else %}
+          <p>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+              <span class="helptext">{{ field.help_text }}</span>
+            {% endif %}
+          </p>
+        {% endif %}
+      {% endfor %}
       <button class="btn" type="submit">Sign up</button>
     </form>
 
